@@ -1,0 +1,10 @@
+{
+    "require": {
+        "google/apiclient": "^2.19"
+    },
+    "extra": {
+        "google/apiclient-services": [
+            "Oauth2"
+        ]
+    }
+}
