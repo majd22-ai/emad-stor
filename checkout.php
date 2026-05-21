@@ -414,22 +414,25 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                     if (osrmData && osrmData.code === 'Ok' && osrmData.routes && osrmData.routes.length > 0) {
                         var distanceKm = osrmData.routes[0].distance / 1000;
                         
-                        var fee = 700; // النطاق الأول (حتى 3 كم)
+                        var feeYer = 700; // النطاق الأول (حتى 3 كم)
                         if (distanceKm > 7) {
-                            fee = 1500; // النطاق الثالث الواسع (أكثر من 7 كم)
+                            feeYer = 1500; // النطاق الثالث الواسع (أكثر من 7 كم)
                         } else if (distanceKm > 3) {
-                            fee = 1000; // النطاق الثاني المتوسط (من 3 إلى 7 كم)
+                            feeYer = 1000; // النطاق الثاني المتوسط (من 3 إلى 7 كم)
                         }
                         
-                        document.getElementById('delivery_fee').value = fee;
+                        var yerRate = <?php echo get_currency_rate('YER'); ?>;
+                        var feeUsd = feeYer / yerRate;
+                        
+                        document.getElementById('delivery_fee').value = feeUsd; // Send to backend in USD
                         
                         // Update total display
                         var baseTotal = parseFloat(document.getElementById('finalTotalDisplay').getAttribute('data-base-total'));
                         var currentCurrency = '<?php echo get_current_currency(); ?>';
                         var exchangeRate = <?php echo get_currency_rate(get_current_currency()); ?>;
                         
-                        var convertedFee = fee * exchangeRate;
-                        var convertedTotal = (baseTotal + fee) * exchangeRate;
+                        var convertedFee = feeUsd * exchangeRate;
+                        var convertedTotal = (baseTotal + feeUsd) * exchangeRate;
                         
                         var warningMsg = resData.warning ? `<br><span style="color:#FF9800; font-size:0.85rem;">(ملاحظة: ${resData.warning})</span>` : '';
                         document.getElementById('distanceInfo').innerHTML = `المسافة التقريبية: <span style="color:#0B1B2B">${distanceKm.toFixed(2)} كم</span><br>رسوم التوصيل: <span style="color:#0B1B2B">${formatPriceJS(convertedFee)}</span>${warningMsg}`;

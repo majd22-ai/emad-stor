@@ -154,23 +154,33 @@ if ($action === 'geocode') {
     }
     
     // إزالة الكلمات الزائدة لتنظيف البحث
-    $query = str_replace(['صنعاء', 'اليمن', '،', ',', 'جوار', 'بجوار', 'بجانب', 'قريب'], '', $query);
-    $query = trim($query);
+    $replacements = [
+        'صنعاء' => '', 'اليمن' => '', '،' => '', ',' => '', 'جوار' => '', 'بجوار' => '', 'بجانب' => '', 'قريب' => '',
+        'خمسه واربعين' => '45', 'خمسة واربعين' => '45', 'خمسه و اربعين' => '45', 'خمسة و اربعين' => '45',
+        'واحد' => '1', 'اثنين' => '2', 'ثلاثه' => '3', 'ثلاثة' => '3', 'اربع' => '4', 'اربعه' => '4', 'أربعه' => '4', 'أربعة' => '4', 'خمسه' => '5', 'خمسة' => '5', 'ست' => '6', 'سته' => '6', 'ستة' => '6', 'سبع' => '7', 'سبعه' => '7', 'سبعة' => '7', 'ثمان' => '8', 'ثمانيه' => '8', 'ثمانية' => '8', 'تسع' => '9', 'تسعه' => '9', 'تسعة' => '9', 'عشر' => '10', 'عشره' => '10', 'عشرة' => '10',
+        'عشرين' => '20', 'ثلاثين' => '30', 'اربعين' => '40', 'أربعين' => '40', 'خمسين' => '50', 'ستين' => '60', 'سبعين' => '70', 'ثمانين' => '80', 'تسعين' => '90',
+        'جوله' => '', 'جولة' => '', 'شارع' => ''
+    ];
+    $query = strtr($query, $replacements);
+    $query = trim(preg_replace('/\s+/', ' ', $query));
     
     $words = explode(' ', $query);
     $data = null;
     
     // Fallback mechanism: Try full string, if empty, remove last word and retry.
-    // This makes it extremely resilient to colloquial addresses like "شارع خولان جولة ابو عادل"
     while (count($words) > 0) {
         $attemptQuery = implode(' ', $words) . ' صنعاء';
-        // Using Photon Komoot API (ElasticSearch based, highly tolerant of typos) with location bias towards Sanaa
+        // Using Photon Komoot API with location bias towards Sanaa
         $url = "https://photon.komoot.io/api/?q=" . urlencode($attemptQuery) . "&lat=15.3519835&lon=44.2158552&limit=1";
         
         $options = [
             "http" => [
                 "header" => "User-Agent: EmadStor/1.0 (info@emad-stor.com)\r\n" .
                             "Accept-Language: ar\r\n"
+            ],
+            "ssl" => [
+                "verify_peer" => false,
+                "verify_peer_name" => false,
             ]
         ];
         $context = stream_context_create($options);
