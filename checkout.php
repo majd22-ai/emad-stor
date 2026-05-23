@@ -30,8 +30,12 @@ $success = false;
 
 // معالجة إرسال النموذج
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['customer_name'] ?? '');
-    $phone = trim($_POST['customer_phone'] ?? '');
+    $token = $_POST['csrf_token'] ?? '';
+    if (!verify_csrf_token($token)) {
+        $error = 'انتهت صلاحية الجلسة (CSRF). يرجى تحديث الصفحة والمحاولة مجدداً.';
+    } else {
+        $name = trim($_POST['customer_name'] ?? '');
+        $phone = trim($_POST['customer_phone'] ?? '');
     $address = trim($_POST['customer_address'] ?? '');
     $payment_method = trim($_POST['payment_method'] ?? 'الدفع عند الاستلام');
     $shipping_method = trim($_POST['shipping_method'] ?? 'توصيل');
@@ -51,8 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_extension = strtolower(pathinfo($_FILES['payment_receipt']['name'], PATHINFO_EXTENSION));
             $allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf'];
             
-            if (in_array($file_extension, $allowed_extensions)) {
-                $file_name = uniqid('receipt_') . '.' . $file_extension;
+            // Security: التحقق من نوع الملف الحقيقي MIME Type
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime_type = finfo_file($finfo, $_FILES['payment_receipt']['tmp_name']);
+            finfo_close($finfo);
+            $allowed_mimes = ['image/jpeg', 'image/png', 'application/pdf'];
+            
+            if (in_array($file_extension, $allowed_extensions) && in_array($mime_type, $allowed_mimes)) {
+                // اسم عشوائي قوي جداً لمنع التخمين
+                $file_name = bin2hex(random_bytes(16)) . '_' . time() . '.' . $file_extension;
                 $target_file = $upload_dir . $file_name;
                 
                 if (move_uploaded_file($_FILES['payment_receipt']['tmp_name'], $target_file)) {
@@ -61,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $error = 'حدث خطأ أثناء حفظ صورة الإيصال.';
                 }
             } else {
-                $error = 'عذراً، يسمح فقط برفع الصور (JPG, JPEG, PNG) أو ملفات PDF.';
+                $error = 'عذراً، يسمح فقط برفع الصور الحقيقية (JPG, PNG) أو ملفات PDF الصالحة.';
             }
         } elseif ($payment_method !== 'الدفع عند الاستلام') {
             $error = 'الرجاء إرفاق صورة الإيصال ليتم تأكيد طلبك.';
@@ -131,6 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'حدث خطأ أثناء حفظ الطلب، الرجاء المحاولة لاحقاً.';
                 // error_log($e->getMessage());
             }
+        }
         }
     }
 }
@@ -220,6 +232,7 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
             <!-- نموذج بيانات العميل متدرج -->
             <div style="flex: 1; min-width: 300px;">
                 <form action="checkout.php" method="POST" class="login-form" id="checkoutForm" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                     <input type="hidden" name="latitude" id="latitude" value="">
                     <input type="hidden" name="longitude" id="longitude" value="">
                     <input type="hidden" name="delivery_fee" id="delivery_fee" value="0">
@@ -268,8 +281,19 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                             <!-- سيتم إدراج تعليمات الدفع هنا -->
                         </div>
                         <div id="receipt-upload" style="margin-top: 1rem; display: none;">
-                            <label style="display: block; margin-bottom: 0.5rem; color: #0B1B2B; font-weight: bold;">إرفاق صورة الإيصال أو الإيداع (من المعرض فقط):</label>
-                            <input type="file" name="payment_receipt" id="payment_receipt" accept="image/*" style="width: 100%; padding: 0.5rem; border: 1.5px solid #E2E8F0; border-radius: 8px; background: #F9FBFD;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #0B1B2B; font-weight: bold;">إرفاق صورة الإيصال أو الإيداع (المعرض أو الكاميرا):</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="flex: 1;">
+                                    <input type="file" name="payment_receipt" id="payment_receipt" accept="image/*" style="width: 100%; padding: 0.5rem; border: 1.5px solid #E2E8F0; border-radius: 8px; background: #F9FBFD;" onchange="handleFileSelect(this)">
+                                </div>
+                                <div>
+                                    <button type="button" onclick="document.getElementById('camera_receipt').click()" style="background: #0d47a1; color: white; border: none; border-radius: 8px; padding: 0.7rem 1rem; cursor: pointer; height: 100%; font-family: inherit;">
+                                        <i class="fas fa-camera"></i> التقاط
+                                    </button>
+                                    <input type="file" id="camera_receipt" accept="image/*" capture="environment" style="display: none;" onchange="handleFileSelect(this)">
+                                </div>
+                            </div>
+                            <div id="file-preview-name" style="margin-top: 5px; font-size: 0.85rem; color: #4CAF50;"></div>
                         </div>
                         <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
                             <button type="button" class="login-btn" onclick="prevStep(1)" style="background: #94a3b8; width: 40%;">السابق</button>
@@ -303,6 +327,28 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
             </div>
             
             <script>
+            function handleFileSelect(inputElement) {
+                if (inputElement.files && inputElement.files.length > 0) {
+                    var camInput = document.getElementById('camera_receipt');
+                    var galInput = document.getElementById('payment_receipt');
+                    
+                    if (inputElement.id === 'camera_receipt') {
+                        camInput.setAttribute('name', 'payment_receipt');
+                        if(galInput) {
+                            galInput.removeAttribute('name');
+                            galInput.value = '';
+                        }
+                    } else {
+                        if(galInput) galInput.setAttribute('name', 'payment_receipt');
+                        if(camInput) {
+                            camInput.removeAttribute('name');
+                            camInput.value = '';
+                        }
+                    }
+                    document.getElementById('file-preview-name').innerText = 'تم اختيار الملف: ' + inputElement.files[0].name;
+                }
+            }
+
             function nextStep(step) {
                 if(step === 2) {
                     var name = document.getElementById('customer_name').value.trim();
@@ -315,8 +361,9 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                 } else if(step === 3) {
                     var method = document.getElementById('payment_method').value;
                     if(method !== 'الدفع عند الاستلام') {
-                        var receipt = document.getElementById('payment_receipt').value;
-                        if(!receipt) {
+                        var receipt = document.getElementById('payment_receipt') ? document.getElementById('payment_receipt').value : '';
+                        var camReceipt = document.getElementById('camera_receipt') ? document.getElementById('camera_receipt').value : '';
+                        if(!receipt && !camReceipt) {
                             alert('الرجاء إرفاق صورة الإيصال أو إثبات الدفع للتحقق من الحوالة قبل الانتقال للخطوة التالية.');
                             return;
                         }
@@ -468,6 +515,19 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                     if(!lat || document.getElementById('submitBtn').disabled) {
                         e.preventDefault();
                         alert('يرجى التأكد من الضغط على زر حساب رسوم التوصيل أولاً لتحديد الموقع والتكلفة.');
+                        return;
+                    }
+                }
+                
+                var payMethod = document.getElementById('payment_method').value;
+                if(payMethod !== 'الدفع عند الاستلام') {
+                    var receipt = document.getElementById('payment_receipt') ? document.getElementById('payment_receipt').value : '';
+                    var camReceipt = document.getElementById('camera_receipt') ? document.getElementById('camera_receipt').value : '';
+                    if(!receipt && !camReceipt) {
+                        e.preventDefault();
+                        alert('الرجاء إرفاق صورة الإشعار أو إثبات الدفع لتأكيد الطلب.');
+                        prevStep(2); // العودة لخطوة الدفع
+                        return;
                     }
                 }
             });
@@ -481,12 +541,15 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                     instDiv.style.display = 'none';
                     document.getElementById('receipt-upload').style.display = 'none';
                     document.getElementById('payment_receipt').removeAttribute('required');
+                    if(document.getElementById('camera_receipt')) document.getElementById('camera_receipt').removeAttribute('required');
                     return;
                 }
                 
                 instDiv.style.display = 'block';
                 document.getElementById('receipt-upload').style.display = 'block';
-                document.getElementById('payment_receipt').setAttribute('required', 'required');
+                // Remove native HTML required to allow JS validation to handle it nicely without conflicting on two inputs
+                document.getElementById('payment_receipt').removeAttribute('required');
+                if(document.getElementById('camera_receipt')) document.getElementById('camera_receipt').removeAttribute('required');
                 
                 if(['محفظة جيب', 'محفظة جوالي', 'محفظة ون كاش', 'محفظة فلوسك'].includes(method)) {
                     text = 'يرجى تحويل المبلغ على رقم نقطة المتجر: <strong style="font-size: 1.2rem;">560570</strong><br>ثم قم بإرفاق صورة الإشعار من الزر المخصص بالأسفل.';

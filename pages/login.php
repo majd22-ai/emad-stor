@@ -57,6 +57,7 @@ include '../includes/header.php';
             ?>
 
             <form action="../auth/login_process.php" method="POST" class="login-form">
+                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
                     <input type="email" name="email" placeholder="البريد الإلكتروني" required>
@@ -83,15 +84,82 @@ include '../includes/header.php';
             </div>
 
             <div class="social-login">
-                <button type="button" class="social-btn google" onclick="window.location.href='../auth/google_login.php'">
+                <button type="button" class="social-btn google" id="btn-google-login">
                     <i class="fab fa-google"></i> Google
                 </button>
-                <button type="button" class="social-btn facebook" onclick="window.location.href='../auth/facebook_login.php'">
+                <button type="button" class="social-btn facebook" id="btn-facebook-login">
                     <i class="fab fa-facebook-f"></i> Facebook
                 </button>
             </div>
         </div>
     </div>
 </main>
+
+<!-- Firebase SDK Integration -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCcKnmmsViJmJk5IRCmyZUGrO2t_0usq5g",
+    authDomain: "emad-store-434d8.firebaseapp.com",
+    projectId: "emad-store-434d8",
+    storageBucket: "emad-store-434d8.firebasestorage.app",
+    messagingSenderId: "109730229844",
+    appId: "1:109730229844:web:5ea31c23df17b29571c7c1",
+    measurementId: "G-KQND5EV3LM"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+
+  const googleProvider = new GoogleAuthProvider();
+  const facebookProvider = new FacebookAuthProvider();
+
+  function handleFirebaseLogin(provider) {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const user = result.user;
+        
+        // إرسال البيانات لمعالجتها في السيرفر لفتح جلسة PHP
+        fetch('../auth/firebase_auth.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                window.location.href = '../index.php'; // توجيه للرئيسية بعد نجاح الدخول
+            } else {
+                alert('فشل تسجيل الدخول: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error communicating with server:', error);
+            alert('حدث خطأ أثناء معالجة بيانات الدخول في السيرفر.');
+        });
+      }).catch((error) => {
+        console.error('Firebase Auth Error:', error);
+        if(error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+            alert('خطأ في مصادقة Firebase: ' + error.message);
+        }
+      });
+  }
+
+  document.getElementById('btn-google-login').addEventListener('click', function() {
+      handleFirebaseLogin(googleProvider);
+  });
+  document.getElementById('btn-facebook-login').addEventListener('click', function() {
+      handleFirebaseLogin(facebookProvider);
+  });
+</script>
 
 <?php include '../includes/footer.php'; ?>

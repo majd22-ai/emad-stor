@@ -1,0 +1,17 @@
+# تعطيل محرك PHP في هذا المجلد
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# منع تشغيل السكربتات بجميع أنواعها
+Options -ExecCGI
+AddHandler cgi-script .php .php3 .php4 .phtml .pl .py .jsp .asp .htm .shtml .sh .cgi
+
+# إجبار الخادم على معاملة الملفات كمرفقات أو نصوص عادية (لا ينفذها)
+ForceType application/octet-stream
+<FilesMatch "(?i)\.(jpe?g|png|gif|pdf)$">
+    ForceType none
+</FilesMatch>

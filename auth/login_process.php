@@ -3,6 +3,14 @@ session_start();
 require_once '../includes/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once '../includes/functions.php';
+    $token = $_POST['csrf_token'] ?? '';
+    if (!verify_csrf_token($token)) {
+        $_SESSION['error'] = 'انتهت صلاحية الجلسة (CSRF). يرجى تحديث الصفحة والمحاولة مجدداً.';
+        header('Location: ../pages/login.php');
+        exit;
+    }
+
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
@@ -18,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password_hash'])) {
-        // تسجيل الدخول بنجاح
+        // تسجيل الدخول بنجاح (منع Session Fixation)
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_name'] = $user['full_name'];
         $_SESSION['user_role'] = $user['role'];

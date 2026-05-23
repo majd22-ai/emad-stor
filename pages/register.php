@@ -56,6 +56,7 @@ include '../includes/header.php';
             ?>
 
             <form action="../auth/register_process.php" method="POST" class="login-form">
+                <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                 <div class="input-group">
                     <i class="fas fa-user"></i>
                     <input type="text" name="name" placeholder="الاسم الكامل" required>

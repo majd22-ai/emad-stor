@@ -15,6 +15,8 @@ $options = [
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
-    throw new \PDOException($e->getMessage(), (int)$e->getCode());
+    // تسجيل الخطأ في السيرفر دون إظهار تفاصيل القاعدة للمستخدم النهائي (Security: Information Disclosure Prevention)
+    error_log("Database Connection Error: " . $e->getMessage());
+    die("عذراً، حدث خطأ أثناء الاتصال بقاعدة البيانات. الرجاء المحاولة لاحقاً.");
 }
 ?>

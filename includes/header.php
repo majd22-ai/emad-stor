@@ -33,7 +33,7 @@ $page_image = $page_image ?? $full_base_url . 'assets/images/منتجات/p35.jp
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/fontawesome.min.css">
     <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/style.css?v=<?php echo time(); ?>">
     <!-- متغيرات العملة للسكربت -->
     <script>

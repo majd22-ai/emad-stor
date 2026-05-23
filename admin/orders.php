@@ -10,8 +10,12 @@ $base_url = '/emad-stor/';
 
 // معالجة تغيير حالة الطلب
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['status'])) {
-    $order_id = (int)$_POST['order_id'];
-    $status = $_POST['status'];
+    $token = $_POST['csrf_token'] ?? '';
+    if (!verify_csrf_token($token)) {
+        $error = "رمز الأمان غير صالح. الرجاء تحديث الصفحة والمحاولة مجدداً.";
+    } else {
+        $order_id = (int)$_POST['order_id'];
+        $status = $_POST['status'];
     
     $stmt = $pdo->prepare("UPDATE orders SET status = ? WHERE id = ?");
     $stmt->execute([$status, $order_id]);
@@ -54,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['s
         }
     } catch (Exception $e) {
         // تجاهل أخطاء البريد لكي لا تعطل عملية التحديث
+    }
     }
 }
 
@@ -259,6 +264,7 @@ $orders = $stmt->fetchAll();
                                     </ul>
 
                                     <form action="" method="POST" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
+                                        <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                                         <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
                                         <label>تحديث الحالة:</label>
                                         <select name="status" style="padding: 5px;">

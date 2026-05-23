@@ -40,16 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Attempt to send email
             $mail_sent = @mail($email, $subject, $message, $headers);
 
-            // For local testing (XAMPP usually blocks mail without SMTP), we will show the code in the success message
-            // In a production environment, remove the " $token" from the success message.
-            $debug_msg = "";
-            if (!$mail_sent) {
-                // If mail fails on localhost, we show it here so the developer/user can test.
-                $debug_msg = "<br><small style='color: #4A627A;'>[لغرض التجربة المحلية، الكود هو: <strong>$token</strong>]</small>";
-            }
-
             $_SESSION['reset_email'] = $email; // Store email in session to use in next step
-            $_SESSION['success'] = "تم إرسال كود التحقق إلى بريدك الإلكتروني بنجاح." . $debug_msg;
+            $_SESSION['success'] = "تم إرسال كود التحقق إلى بريدك الإلكتروني بنجاح.";
             header('Location: ../pages/verify_code.php');
             exit;
         } else {

@@ -3,6 +3,14 @@ session_start();
 require_once '../includes/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once '../includes/functions.php';
+    $token = $_POST['csrf_token'] ?? '';
+    if (!verify_csrf_token($token)) {
+        $_SESSION['error'] = 'انتهت صلاحية الجلسة (CSRF). يرجى المحاولة مجدداً.';
+        header('Location: ../pages/register.php');
+        exit;
+    }
+
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
