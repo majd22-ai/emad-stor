@@ -108,6 +108,7 @@ $orders = $stmt->fetchAll();
     <a href="categories.php"><i class="fas fa-list"></i> إدارة الأقسام</a>
     <a href="products.php"><i class="fas fa-box"></i> إدارة المنتجات</a>
     <a href="orders.php" class="active"><i class="fas fa-shopping-cart"></i> إدارة الطلبات</a>
+    <a href="users.php"><i class="fas fa-users"></i> إدارة المستخدمين</a>
     <a href="../index.php"><i class="fas fa-store"></i> العودة للمتجر</a>
     <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
 </div>
