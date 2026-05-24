@@ -15,10 +15,41 @@ $stmt = $pdo->prepare("SELECT * FROM categories WHERE slug = ?");
 $stmt->execute([$slug]);
 $category = $stmt->fetch();
 
-// إذا لم يكن القسم موجوداً
+// إذا لم يكن القسم موجوداً، نقوم بإنشاء الأقسام الأساسية تلقائياً
 if (!$category) {
-    header('Location: index.php');
-    exit;
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS categories (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            slug VARCHAR(100) UNIQUE NOT NULL
+        )");
+        
+        $cats = [
+            ['name' => 'خواتم رجالية', 'slug' => 'me-rings'],
+            ['name' => 'مسابح', 'slug' => 'men-beads'],
+            ['name' => 'خواتم نسائية', 'slug' => 'wo-rings'],
+            ['name' => 'قلائد', 'slug' => 'wo-necklaces'],
+            ['name' => 'أساور', 'slug' => 'wo-bracelets'],
+            ['name' => 'أقراط', 'slug' => 'wo-earrings']
+        ];
+        
+        foreach ($cats as $cat) {
+            $stmtInsert = $pdo->prepare("INSERT INTO categories (name, slug) SELECT ?, ? WHERE NOT EXISTS (SELECT 1 FROM categories WHERE slug = ?)");
+            $stmtInsert->execute([$cat['name'], $cat['slug'], $cat['slug']]);
+        }
+        
+        // المحاولة مرة أخرى بعد الإنشاء
+        $stmt->execute([$slug]);
+        $category = $stmt->fetch();
+        
+        if (!$category) {
+            header('Location: index.php');
+            exit;
+        }
+    } catch (Exception $e) {
+        header('Location: index.php');
+        exit;
+    }
 }
 
 // جلب منتجات هذا القسم
