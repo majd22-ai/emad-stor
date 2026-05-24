@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 session_start();
 if (!isset($_SESSION['reset_email'])) {
     header('Location: login.php');
@@ -30,8 +30,8 @@ include '../includes/header.php';
         <div class="login-card">
             <div class="login-header">
                 <i class="fas fa-shield-alt"></i>
-                <h2>ط¥ط¯ط®ط§ظ„ ظƒظˆط¯ ط§ظ„طھط­ظ‚ظ‚</h2>
-                <p>ظ„ظ‚ط¯ ط£ط±ط³ظ„ظ†ط§ ظƒظˆط¯ط§ظ‹ ظ…ظƒظˆظ†ط§ظ‹ ظ…ظ† 7 ط£ط±ظ‚ط§ظ… ط¥ظ„ظ‰ ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ:<br> <strong dir="ltr"><?php echo htmlspecialchars($_SESSION['reset_email']); ?></strong></p>
+                <h2>إدخال كود التحقق</h2>
+                <p>لقد أرسلنا كوداً مكوناً من 7 أرقام إلى البريد الإلكتروني:<br> <strong dir="ltr"><?php echo htmlspecialchars($_SESSION['reset_email']); ?></strong></p>
             </div>
 
             <?php
@@ -49,9 +49,9 @@ include '../includes/header.php';
                 <div class="input-group">
                     <input type="text" name="token" placeholder="0000000" maxlength="7" required autocomplete="off" dir="ltr">
                 </div> 
-                <button type="submit" class="login-btn">طھط­ظ‚ظ‚ ظˆط§ظ„ظ…طھط§ط¨ط¹ط©</button>
+                <button type="submit" class="login-btn">تحقق والمتابعة</button>
                 <div style="margin-top: 20px;">
-                    <a href="forgot_password.php" style="color: #4A627A; text-decoration: none; font-size: 0.95rem; font-weight: bold;">طھط؛ظٹظٹط± ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ</a>
+                    <a href="forgot_password.php" style="color: #4A627A; text-decoration: none; font-size: 0.95rem; font-weight: bold;">تغيير البريد الإلكتروني</a>
                 </div>
             </form>
         </div>

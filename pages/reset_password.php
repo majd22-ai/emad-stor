@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 session_start();
 if (!isset($_SESSION['reset_email']) || !isset($_SESSION['verified_token'])) {
     header('Location: login.php');
@@ -30,8 +30,8 @@ include '../includes/header.php';
         <div class="login-card">
             <div class="login-header">
                 <i class="fas fa-key"></i>
-                <h2>طھط¹ظٹظٹظ† ظƒظ„ظ…ط© ظ…ط±ظˆط± ط¬ط¯ظٹط¯ط©</h2>
-                <p>ط§ظ„ط±ط¬ط§ط، ط¥ط¯ط®ط§ظ„ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط¬ط¯ظٹط¯ط© ظ„ظ„ط­ط³ط§ط¨: <br><strong dir="ltr"><?php echo htmlspecialchars($_SESSION['reset_email']); ?></strong></p>
+                <h2>تعيين كلمة مرور جديدة</h2>
+                <p>الرجاء إدخال كلمة المرور الجديدة للحساب: <br><strong dir="ltr"><?php echo htmlspecialchars($_SESSION['reset_email']); ?></strong></p>
             </div>
 
             <?php
@@ -44,13 +44,13 @@ include '../includes/header.php';
             <form action="../auth/reset_process.php" method="POST" class="login-form">
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="new_password" placeholder="ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط± ط§ظ„ط¬ط¯ظٹط¯ط©" required minlength="6">
+                    <input type="password" name="new_password" placeholder="كلمة المرور الجديدة" required minlength="6">
                 </div> 
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="confirm_password" placeholder="طھط£ظƒظٹط¯ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±" required minlength="6">
+                    <input type="password" name="confirm_password" placeholder="تأكيد كلمة المرور" required minlength="6">
                 </div> 
-                <button type="submit" class="login-btn">ط­ظپط¸ ظˆطھط؛ظٹظٹط± ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±</button>
+                <button type="submit" class="login-btn">حفظ وتغيير كلمة المرور</button>
             </form>
         </div>
     </div>

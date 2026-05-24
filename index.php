@@ -12,11 +12,11 @@ $products = $stmt->fetchAll();
 <section class="hero-section" id="home">
     <div class="hero-background" id="heroSlideshow">
         <!-- الصورة الأولى (يمكنك تغيير المسار) -->
-        <img src="assets/images/منتجات/p35.jpg" alt="فضيات ابو عماد" class="hero-image slide active">
+        <img src="<?php echo $base_url; ?>assets/images/منتجات/p35.jpg" alt="فضيات ابو عماد" class="hero-image slide active">
         <!-- الصورة الثانية (ضع المسار هنا) -->
-        <img src="assets/images/خواتم نسائي/wr5.jpg" alt="فضيات ابو عماد" class="hero-image slide">
+        <img src="<?php echo $base_url; ?>assets/images/خواتم نسائي/wr5.jpg" alt="فضيات ابو عماد" class="hero-image slide">
         <!-- الصورة الثالثة (ضع المسار هنا) -->
-        <img src="assets/images/منتجات/p25.jpg" alt="فضيات ابو عماد" class="hero-image slide">
+        <img src="<?php echo $base_url; ?>assets/images/منتجات/P25.jpg" alt="فضيات ابو عماد" class="hero-image slide">
     </div>
     <div class="hero-content">
         <h1>  ابو عماد للفضة والعقيق  </h1>

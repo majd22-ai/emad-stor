@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 $base_url = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 include '../includes/header.php'; 
 ?>
@@ -24,8 +24,8 @@ include '../includes/header.php';
         <div class="login-card">
             <div class="login-header">
                 <i class="fas fa-envelope-open-text"></i>
-                <h2>ظ†ط³ظٹطھ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±طں</h2>
-                <p>ط£ط¯ط®ظ„ ط¨ط±ظٹط¯ظƒ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ ط§ظ„ظ…ط³ط¬ظ„ ظ„ط¯ظٹظ†ط§ ظˆط³ظ†ظ‚ظˆظ… ط¨ط¥ط±ط³ط§ظ„ ظƒظˆط¯ ط§ظ„طھط­ظ‚ظ‚ (7 ط£ط±ظ‚ط§ظ…) ظ„طھطھظ…ظƒظ† ظ…ظ† ط¥ط¹ط§ط¯ط© طھط¹ظٹظٹظ† ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±.</p>
+                <h2>نسيت كلمة المرور؟</h2>
+                <p>أدخل بريدك الإلكتروني المسجل لدينا وسنقوم بإرسال كود التحقق (7 أرقام) لتتمكن من إعادة تعيين كلمة المرور.</p>
             </div>
 
             <?php
@@ -42,11 +42,11 @@ include '../includes/header.php';
             <form action="../auth/forgot_process.php" method="POST" class="login-form">
                 <div class="input-group">
                     <i class="fas fa-at"></i>
-                    <input type="email" name="email" placeholder="ط£ط¯ط®ظ„ ط¨ط±ظٹط¯ظƒ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ" required>
+                    <input type="email" name="email" placeholder="أدخل بريدك الإلكتروني" required>
                 </div> 
-                <button type="submit" class="login-btn">ط¥ط±ط³ط§ظ„ ظƒظˆط¯ ط§ظ„طھط­ظ‚ظ‚</button>
+                <button type="submit" class="login-btn">إرسال كود التحقق</button>
                 <div style="margin-top: 20px;">
-                    <a href="login.php" style="color: #4A627A; text-decoration: none; font-size: 0.95rem; font-weight: bold;"><i class="fas fa-arrow-right"></i> ط§ظ„ط¹ظˆط¯ط© ظ„طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„</a>
+                    <a href="login.php" style="color: #4A627A; text-decoration: none; font-size: 0.95rem; font-weight: bold;"><i class="fas fa-arrow-right"></i> العودة لتسجيل الدخول</a>
                 </div>
             </form>
         </div>
