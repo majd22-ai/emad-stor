@@ -1,18 +1,18 @@
-<?php
+﻿<?php
 session_start();
 require_once '../includes/db_connect.php';
 require_once '../includes/functions.php';
 
-// حماية الصفحة
+// ط­ظ…ط§ظٹط© ط§ظ„طµظپط­ط©
 check_admin();
 
-$base_url = '/emad-stor/';
+$base_url = (strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], 'localhost') !== false || strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم | فضيات ابو عماد</title>
+    <title>ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ… | ظپط¶ظٹط§طھ ط§ط¨ظˆ ط¹ظ…ط§ط¯</title>
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,21 +34,21 @@ $base_url = '/emad-stor/';
 <body>
 
 <div class="sidebar">
-    <h2>لوحة التحكم</h2>
-    <a href="index.php"><i class="fas fa-home"></i> الرئيسية</a>
-    <a href="categories.php"><i class="fas fa-list"></i> إدارة الأقسام</a>
-    <a href="products.php"><i class="fas fa-box"></i> إدارة المنتجات</a>
-    <a href="orders.php"><i class="fas fa-shopping-cart"></i> إدارة الطلبات</a>
-    <a href="coupons.php"><i class="fas fa-tags"></i> إدارة الكوبونات</a>
-    <a href="users.php"><i class="fas fa-users"></i> إدارة المستخدمين</a>
-    <a href="../index.php"><i class="fas fa-store"></i> العودة للمتجر</a>
-    <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+    <h2>ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ…</h2>
+    <a href="index.php"><i class="fas fa-home"></i> ط§ظ„ط±ط¦ظٹط³ظٹط©</a>
+    <a href="categories.php"><i class="fas fa-list"></i> ط¥ط¯ط§ط±ط© ط§ظ„ط£ظ‚ط³ط§ظ…</a>
+    <a href="products.php"><i class="fas fa-box"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظ…ظ†طھط¬ط§طھ</a>
+    <a href="orders.php"><i class="fas fa-shopping-cart"></i> ط¥ط¯ط§ط±ط© ط§ظ„ط·ظ„ط¨ط§طھ</a>
+    <a href="coupons.php"><i class="fas fa-tags"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظƒظˆط¨ظˆظ†ط§طھ</a>
+    <a href="users.php"><i class="fas fa-users"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظ…ط³طھط®ط¯ظ…ظٹظ†</a>
+    <a href="../index.php"><i class="fas fa-store"></i> ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ظ…طھط¬ط±</a>
+    <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬</a>
 </div>
 
 <div class="content">
-    <h1>مرحباً بك يا <?php echo htmlspecialchars(get_user_name()); ?></h1>
+    <h1>ظ…ط±ط­ط¨ط§ظ‹ ط¨ظƒ ظٹط§ <?php echo htmlspecialchars(get_user_name()); ?></h1>
     <div class="card">
-        <p>من هنا يمكنك إدارة جميع الأقسام والمنتجات المعروضة في المتجر بسهولة.</p>
+        <p>ظ…ظ† ظ‡ظ†ط§ ظٹظ…ظƒظ†ظƒ ط¥ط¯ط§ط±ط© ط¬ظ…ظٹط¹ ط§ظ„ط£ظ‚ط³ط§ظ… ظˆط§ظ„ظ…ظ†طھط¬ط§طھ ط§ظ„ظ…ط¹ط±ظˆط¶ط© ظپظٹ ط§ظ„ظ…طھط¬ط± ط¨ط³ظ‡ظˆظ„ط©.</p>
     </div>
 
     <?php
@@ -57,9 +57,9 @@ $base_url = '/emad-stor/';
     $userCount = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
     $ordersCount = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
 
-    // جلب المبيعات الشهرية
-    // استخدام STRFTIME للعمل مع SQLite (لأن DATE_FORMAT لا يعمل في SQLite إذا كنت تستخدمها) أو DATE_FORMAT للـ MySQL. 
-    // سنستخدم استعلام يدعم MySQL بشكل أساسي
+    // ط¬ظ„ط¨ ط§ظ„ظ…ط¨ظٹط¹ط§طھ ط§ظ„ط´ظ‡ط±ظٹط©
+    // ط§ط³طھط®ط¯ط§ظ… STRFTIME ظ„ظ„ط¹ظ…ظ„ ظ…ط¹ SQLite (ظ„ط£ظ† DATE_FORMAT ظ„ط§ ظٹط¹ظ…ظ„ ظپظٹ SQLite ط¥ط°ط§ ظƒظ†طھ طھط³طھط®ط¯ظ…ظ‡ط§) ط£ظˆ DATE_FORMAT ظ„ظ„ظ€ MySQL. 
+    // ط³ظ†ط³طھط®ط¯ظ… ط§ط³طھط¹ظ„ط§ظ… ظٹط¯ط¹ظ… MySQL ط¨ط´ظƒظ„ ط£ط³ط§ط³ظٹ
     $revenue_query = "SELECT DATE_FORMAT(created_at, '%Y-%m') as month, SUM(total_price) as revenue FROM orders WHERE status != 'cancelled' GROUP BY DATE_FORMAT(created_at, '%Y-%m') ORDER BY month ASC LIMIT 6";
     try {
         $revenue_stmt = $pdo->query($revenue_query);
@@ -73,7 +73,7 @@ $base_url = '/emad-stor/';
         $months = []; $revenues = []; // fallback in case of SQLite dialect differences
     }
 
-    // جلب المنتجات الأكثر مبيعاً
+    // ط¬ظ„ط¨ ط§ظ„ظ…ظ†طھط¬ط§طھ ط§ظ„ط£ظƒط«ط± ظ…ط¨ظٹط¹ط§ظ‹
     $top_products_query = "SELECT p.title, SUM(oi.quantity) as total_sold FROM order_items oi JOIN products p ON oi.product_id = p.id GROUP BY oi.product_id ORDER BY total_sold DESC LIMIT 5";
     try {
         $top_products_stmt = $pdo->query($top_products_query);
@@ -90,15 +90,15 @@ $base_url = '/emad-stor/';
 
     <div class="stats-grid">
         <div class="stat-card">
-            <h3>إجمالي المبيعات (طلبات)</h3>
+            <h3>ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ظ…ط¨ظٹط¹ط§طھ (ط·ظ„ط¨ط§طھ)</h3>
             <div class="num"><?php echo $ordersCount; ?></div>
         </div>
         <div class="stat-card">
-            <h3>إجمالي المنتجات</h3>
+            <h3>ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ظ…ظ†طھط¬ط§طھ</h3>
             <div class="num"><?php echo $prodCount; ?></div>
         </div>
         <div class="stat-card">
-            <h3>العملاء المسجلين</h3>
+            <h3>ط§ظ„ط¹ظ…ظ„ط§ط، ط§ظ„ظ…ط³ط¬ظ„ظٹظ†</h3>
             <div class="num"><?php echo $userCount; ?></div>
         </div>
     </div>
@@ -107,13 +107,13 @@ $base_url = '/emad-stor/';
     <div style="display: flex; gap: 20px; margin-top: 40px; flex-wrap: wrap;">
         <!-- Line Chart -->
         <div class="card" style="flex: 2; min-width: 400px;">
-            <h3 style="margin-top: 0;">الأرباح الشهرية (بالدولار)</h3>
+            <h3 style="margin-top: 0;">ط§ظ„ط£ط±ط¨ط§ط­ ط§ظ„ط´ظ‡ط±ظٹط© (ط¨ط§ظ„ط¯ظˆظ„ط§ط±)</h3>
             <canvas id="revenueChart"></canvas>
         </div>
 
         <!-- Pie Chart -->
         <div class="card" style="flex: 1; min-width: 300px;">
-            <h3 style="margin-top: 0;">أكثر المنتجات مبيعاً</h3>
+            <h3 style="margin-top: 0;">ط£ظƒط«ط± ط§ظ„ظ…ظ†طھط¬ط§طھ ظ…ط¨ظٹط¹ط§ظ‹</h3>
             <canvas id="topProductsChart"></canvas>
         </div>
     </div>
@@ -121,14 +121,14 @@ $base_url = '/emad-stor/';
 </div>
 
 <script>
-    // إعداد مخطط الأرباح
+    // ط¥ط¹ط¯ط§ط¯ ظ…ط®ط·ط· ط§ظ„ط£ط±ط¨ط§ط­
     const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
     new Chart(ctxRevenue, {
         type: 'line',
         data: {
             labels: <?php echo json_encode($months); ?>,
             datasets: [{
-                label: 'إجمالي المبيعات ($)',
+                label: 'ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ظ…ط¨ظٹط¹ط§طھ ($)',
                 data: <?php echo json_encode($revenues); ?>,
                 borderColor: '#FFD966',
                 backgroundColor: 'rgba(255, 217, 102, 0.2)',
@@ -145,7 +145,7 @@ $base_url = '/emad-stor/';
         }
     });
 
-    // إعداد مخطط المنتجات الأكثر مبيعاً
+    // ط¥ط¹ط¯ط§ط¯ ظ…ط®ط·ط· ط§ظ„ظ…ظ†طھط¬ط§طھ ط§ظ„ط£ظƒط«ط± ظ…ط¨ظٹط¹ط§ظ‹
     const ctxProducts = document.getElementById('topProductsChart').getContext('2d');
     new Chart(ctxProducts, {
         type: 'doughnut',

@@ -1,40 +1,40 @@
-<?php
+﻿<?php
 session_start();
 require_once '../includes/db_connect.php';
 require_once '../includes/functions.php';
 
-// حماية الصفحة
+// ط­ظ…ط§ظٹط© ط§ظ„طµظپط­ط©
 check_admin();
 
-$base_url = '/emad-stor/';
+$base_url = (strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], 'localhost') !== false || strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 
-// معالجة تغيير صلاحيات المستخدم
+// ظ…ط¹ط§ظ„ط¬ط© طھط؛ظٹظٹط± طµظ„ط§ط­ظٹط§طھ ط§ظ„ظ…ط³طھط®ط¯ظ…
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['action'])) {
     $token = $_POST['csrf_token'] ?? '';
     if (!verify_csrf_token($token)) {
-        $error = "رمز الأمان غير صالح. الرجاء المحاولة مجدداً.";
+        $error = "ط±ظ…ط² ط§ظ„ط£ظ…ط§ظ† ط؛ظٹط± طµط§ظ„ط­. ط§ظ„ط±ط¬ط§ط، ط§ظ„ظ…ط­ط§ظˆظ„ط© ظ…ط¬ط¯ط¯ط§ظ‹.";
     } else {
         $target_user_id = (int)$_POST['user_id'];
         $action = $_POST['action'];
 
-        // منع المدير من تغيير صلاحيات نفسه عن طريق الخطأ
+        // ظ…ظ†ط¹ ط§ظ„ظ…ط¯ظٹط± ظ…ظ† طھط؛ظٹظٹط± طµظ„ط§ط­ظٹط§طھ ظ†ظپط³ظ‡ ط¹ظ† ط·ط±ظٹظ‚ ط§ظ„ط®ط·ط£
         if ($target_user_id === $_SESSION['user_id']) {
-            $error = "لا يمكنك تغيير صلاحيات حسابك الخاص.";
+            $error = "ظ„ط§ ظٹظ…ظƒظ†ظƒ طھط؛ظٹظٹط± طµظ„ط§ط­ظٹط§طھ ط­ط³ط§ط¨ظƒ ط§ظ„ط®ط§طµ.";
         } else {
             if ($action === 'make_admin') {
                 $stmt = $pdo->prepare("UPDATE users SET role = 'admin' WHERE id = ?");
                 $stmt->execute([$target_user_id]);
-                $success = "تم ترقية المستخدم إلى مدير بنجاح.";
+                $success = "طھظ… طھط±ظ‚ظٹط© ط§ظ„ظ…ط³طھط®ط¯ظ… ط¥ظ„ظ‰ ظ…ط¯ظٹط± ط¨ظ†ط¬ط§ط­.";
             } elseif ($action === 'make_customer') {
                 $stmt = $pdo->prepare("UPDATE users SET role = 'customer' WHERE id = ?");
                 $stmt->execute([$target_user_id]);
-                $success = "تم تحويل المدير إلى مستخدم عادي بنجاح.";
+                $success = "طھظ… طھط­ظˆظٹظ„ ط§ظ„ظ…ط¯ظٹط± ط¥ظ„ظ‰ ظ…ط³طھط®ط¯ظ… ط¹ط§ط¯ظٹ ط¨ظ†ط¬ط§ط­.";
             }
         }
     }
 }
 
-// جلب جميع المستخدمين
+// ط¬ظ„ط¨ ط¬ظ…ظٹط¹ ط§ظ„ظ…ط³طھط®ط¯ظ…ظٹظ†
 $stmt = $pdo->query("SELECT * FROM users ORDER BY created_at DESC");
 $users = $stmt->fetchAll();
 ?>
@@ -42,7 +42,7 @@ $users = $stmt->fetchAll();
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة المستخدمين | فضيات ابو عماد</title>
+    <title>ط¥ط¯ط§ط±ط© ط§ظ„ظ…ط³طھط®ط¯ظ…ظٹظ† | ظپط¶ظٹط§طھ ط§ط¨ظˆ ط¹ظ…ط§ط¯</title>
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -75,19 +75,19 @@ $users = $stmt->fetchAll();
 <body>
 
 <div class="sidebar">
-    <h2>لوحة التحكم</h2>
-    <a href="index.php"><i class="fas fa-home"></i> الرئيسية</a>
-    <a href="categories.php"><i class="fas fa-list"></i> إدارة الأقسام</a>
-    <a href="products.php"><i class="fas fa-box"></i> إدارة المنتجات</a>
-    <a href="orders.php"><i class="fas fa-shopping-cart"></i> إدارة الطلبات</a>
-    <a href="coupons.php"><i class="fas fa-tags"></i> إدارة الكوبونات</a>
-    <a href="users.php" class="active"><i class="fas fa-users"></i> إدارة المستخدمين</a>
-    <a href="../index.php"><i class="fas fa-store"></i> العودة للمتجر</a>
-    <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+    <h2>ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ…</h2>
+    <a href="index.php"><i class="fas fa-home"></i> ط§ظ„ط±ط¦ظٹط³ظٹط©</a>
+    <a href="categories.php"><i class="fas fa-list"></i> ط¥ط¯ط§ط±ط© ط§ظ„ط£ظ‚ط³ط§ظ…</a>
+    <a href="products.php"><i class="fas fa-box"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظ…ظ†طھط¬ط§طھ</a>
+    <a href="orders.php"><i class="fas fa-shopping-cart"></i> ط¥ط¯ط§ط±ط© ط§ظ„ط·ظ„ط¨ط§طھ</a>
+    <a href="coupons.php"><i class="fas fa-tags"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظƒظˆط¨ظˆظ†ط§طھ</a>
+    <a href="users.php" class="active"><i class="fas fa-users"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظ…ط³طھط®ط¯ظ…ظٹظ†</a>
+    <a href="../index.php"><i class="fas fa-store"></i> ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ظ…طھط¬ط±</a>
+    <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬</a>
 </div>
 
 <div class="content">
-    <h1>إدارة المستخدمين</h1>
+    <h1>ط¥ط¯ط§ط±ط© ط§ظ„ظ…ط³طھط®ط¯ظ…ظٹظ†</h1>
     
     <?php if(isset($success)): ?>
         <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
@@ -97,18 +97,18 @@ $users = $stmt->fetchAll();
     <?php endif; ?>
 
     <div class="card">
-        <input type="text" id="searchInput" class="search-box" placeholder="ابحث عن مستخدم بالاسم أو الإيميل..." onkeyup="filterUsers()">
+        <input type="text" id="searchInput" class="search-box" placeholder="ط§ط¨ط­ط« ط¹ظ† ظ…ط³طھط®ط¯ظ… ط¨ط§ظ„ط§ط³ظ… ط£ظˆ ط§ظ„ط¥ظٹظ…ظٹظ„..." onkeyup="filterUsers()">
 
         <?php if (count($users) > 0): ?>
             <table id="usersTable">
                 <thead>
                     <tr>
-                        <th>رقم</th>
-                        <th>اسم المستخدم</th>
-                        <th>البريد الإلكتروني</th>
-                        <th>الصلاحية</th>
-                        <th>تاريخ التسجيل</th>
-                        <th>الإجراءات</th>
+                        <th>ط±ظ‚ظ…</th>
+                        <th>ط§ط³ظ… ط§ظ„ظ…ط³طھط®ط¯ظ…</th>
+                        <th>ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ</th>
+                        <th>ط§ظ„طµظ„ط§ط­ظٹط©</th>
+                        <th>طھط§ط±ظٹط® ط§ظ„طھط³ط¬ظٹظ„</th>
+                        <th>ط§ظ„ط¥ط¬ط±ط§ط،ط§طھ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -119,27 +119,27 @@ $users = $stmt->fetchAll();
                             <td><?php echo htmlspecialchars($user['email']); ?></td>
                             <td>
                                 <?php if ($user['role'] === 'admin'): ?>
-                                    <span class="role-badge role-admin"><i class="fas fa-user-shield"></i> مدير</span>
+                                    <span class="role-badge role-admin"><i class="fas fa-user-shield"></i> ظ…ط¯ظٹط±</span>
                                 <?php else: ?>
-                                    <span class="role-badge role-customer">مستخدم عادي</span>
+                                    <span class="role-badge role-customer">ظ…ط³طھط®ط¯ظ… ط¹ط§ط¯ظٹ</span>
                                 <?php endif; ?>
                             </td>
                             <td dir="ltr" style="text-align: right;"><?php echo date('Y-m-d', strtotime($user['created_at'])); ?></td>
                             <td>
                                 <?php if ($user['id'] !== $_SESSION['user_id']): ?>
-                                    <form action="" method="POST" style="display:inline;" onsubmit="return confirm('هل أنت متأكد من تغيير صلاحيات هذا المستخدم؟');">
+                                    <form action="" method="POST" style="display:inline;" onsubmit="return confirm('ظ‡ظ„ ط£ظ†طھ ظ…طھط£ظƒط¯ ظ…ظ† طھط؛ظٹظٹط± طµظ„ط§ط­ظٹط§طھ ظ‡ط°ط§ ط§ظ„ظ…ط³طھط®ط¯ظ…طں');">
                                         <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                                         <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
                                         <?php if ($user['role'] !== 'admin'): ?>
                                             <input type="hidden" name="action" value="make_admin">
-                                            <button type="submit" class="btn btn-make-admin"><i class="fas fa-level-up-alt"></i> ترقية كمدير</button>
+                                            <button type="submit" class="btn btn-make-admin"><i class="fas fa-level-up-alt"></i> طھط±ظ‚ظٹط© ظƒظ…ط¯ظٹط±</button>
                                         <?php else: ?>
                                             <input type="hidden" name="action" value="make_customer">
-                                            <button type="submit" class="btn btn-make-customer"><i class="fas fa-level-down-alt"></i> إزالة الإدارة</button>
+                                            <button type="submit" class="btn btn-make-customer"><i class="fas fa-level-down-alt"></i> ط¥ط²ط§ظ„ط© ط§ظ„ط¥ط¯ط§ط±ط©</button>
                                         <?php endif; ?>
                                     </form>
                                 <?php else: ?>
-                                    <span style="color: #6c757d; font-size: 0.9em;">(هذا حسابك)</span>
+                                    <span style="color: #6c757d; font-size: 0.9em;">(ظ‡ط°ط§ ط­ط³ط§ط¨ظƒ)</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -147,7 +147,7 @@ $users = $stmt->fetchAll();
                 </tbody>
             </table>
         <?php else: ?>
-            <p>لا يوجد مستخدمين.</p>
+            <p>ظ„ط§ ظٹظˆط¬ط¯ ظ…ط³طھط®ط¯ظ…ظٹظ†.</p>
         <?php endif; ?>
     </div>
 </div>

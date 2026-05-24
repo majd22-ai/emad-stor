@@ -6,8 +6,8 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/functions.php';
 
-// تحديد المسار الأساسي لضمان عمل الروابط بشكل صحيح
-$base_url = '/emad-stor/';
+// تحديد المسار الأساسي لضمان عمل الروابط بشكل صحيح (سواء على السيرفر المحلي أو الاستضافة)
+$base_url = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 // إعداد متغيرات الـ SEO الافتراضية
 $page_title = $page_title ?? 'فضيات ابو عماد | الفضة والعقيق اليماني';
 $page_desc = $page_desc ?? 'متجر فضيات أبو عماد يقدم أرقى الخواتم والمسابح من الفضة الخالصة المرصعة بالعقيق اليماني الأصلي. تسوق الآن.';

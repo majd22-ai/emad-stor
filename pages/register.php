@@ -1,5 +1,5 @@
-<?php 
-$base_url = '/emad-stor/';
+﻿<?php 
+$base_url = (strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], 'localhost') !== false || strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 include '../includes/header.php'; 
 ?>
 <style>
@@ -35,13 +35,13 @@ include '../includes/header.php';
 @media (max-width: 520px) { .login-card { padding: 1.5rem; } .social-login { flex-direction: column; } }
 </style>
 
-<!-- ==================== نموذج التسجيل (متمركز عمودياً) ==================== -->
+<!-- ==================== ظ†ظ…ظˆط°ط¬ ط§ظ„طھط³ط¬ظٹظ„ (ظ…طھظ…ط±ظƒط² ط¹ظ…ظˆط¯ظٹط§ظ‹) ==================== -->
 <main class="login-main">
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
                 <i class="fas fa-user-plus"></i>
-                <h2>إنشاء حساب جديد</h2>
+                <h2>ط¥ظ†ط´ط§ط، ط­ط³ط§ط¨ ط¬ط¯ظٹط¯</h2>
             </div>
 
             <?php
@@ -59,19 +59,19 @@ include '../includes/header.php';
                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                 <div class="input-group">
                     <i class="fas fa-user"></i>
-                    <input type="text" name="name" placeholder="الاسم الكامل" required>
+                    <input type="text" name="name" placeholder="ط§ظ„ط§ط³ظ… ط§ظ„ظƒط§ظ…ظ„" required>
                 </div> 
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+                    <input type="email" name="email" placeholder="ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ" required>
                 </div> 
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="password" placeholder="كلمة المرور" required>
+                    <input type="password" name="password" placeholder="ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±" required>
                 </div> 
-                <button type="submit" class="login-btn">إنشاء حساب</button>
+                <button type="submit" class="login-btn">ط¥ظ†ط´ط§ط، ط­ط³ط§ط¨</button>
                 <div style="text-align:center; margin-top:15px;">
-                    <a href="login.php" style="color: #0B1B2B; text-decoration: none;">لديك حساب بالفعل؟ سجل دخولك</a>
+                    <a href="login.php" style="color: #0B1B2B; text-decoration: none;">ظ„ط¯ظٹظƒ ط­ط³ط§ط¨ ط¨ط§ظ„ظپط¹ظ„طں ط³ط¬ظ„ ط¯ط®ظˆظ„ظƒ</a>
                 </div>
             </form>
         </div>

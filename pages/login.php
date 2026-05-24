@@ -1,5 +1,5 @@
-<?php 
-$base_url = '/emad-stor/';
+﻿<?php 
+$base_url = (strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], 'localhost') !== false || strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 include '../includes/header.php'; 
 ?>
 <style>
@@ -35,14 +35,14 @@ include '../includes/header.php';
 @media (max-width: 520px) { .login-card { padding: 1.5rem; } .social-login { flex-direction: column; } }
 </style>
 
-<!-- ==================== نموذج تسجيل الدخول (متمركز عمودياً) ==================== -->
+<!-- ==================== ظ†ظ…ظˆط°ط¬ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ (ظ…طھظ…ط±ظƒط² ط¹ظ…ظˆط¯ظٹط§ظ‹) ==================== -->
 <main class="login-main">
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
                 <i class="fas fa-gem"></i>
-                <h2>مرحباً بك في متجر ابو عماد</h2>
-                <p>سجل الدخول للوصول إلى طلباتك والمفضلة</p>
+                <h2>ظ…ط±ط­ط¨ط§ظ‹ ط¨ظƒ ظپظٹ ظ…طھط¬ط± ط§ط¨ظˆ ط¹ظ…ط§ط¯</h2>
+                <p>ط³ط¬ظ„ ط§ظ„ط¯ط®ظˆظ„ ظ„ظ„ظˆطµظˆظ„ ط¥ظ„ظ‰ ط·ظ„ط¨ط§طھظƒ ظˆط§ظ„ظ…ظپط¶ظ„ط©</p>
             </div>
 
             <?php
@@ -60,27 +60,27 @@ include '../includes/header.php';
                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                 <div class="input-group">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+                    <input type="email" name="email" placeholder="ط§ظ„ط¨ط±ظٹط¯ ط§ظ„ط¥ظ„ظƒطھط±ظˆظ†ظٹ" required>
                 </div> 
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="password" placeholder="كلمة المرور" required>
+                    <input type="password" name="password" placeholder="ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±" required>
                 </div> 
                 <div class="form-options">
                     <label class="checkbox-label">
                         <input type="checkbox" name="remember">
-                        <span>تذكرني</span>
+                        <span>طھط°ظƒط±ظ†ظٹ</span>
                     </label>
-                    <a href="forgot_password.php" class="forgot-link">نسيت كلمة المرور؟</a>
+                    <a href="forgot_password.php" class="forgot-link">ظ†ط³ظٹطھ ظƒظ„ظ…ط© ط§ظ„ظ…ط±ظˆط±طں</a>
                 </div>
-                <button type="submit" class="login-btn">تسجيل الدخول</button>
+                <button type="submit" class="login-btn">طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„</button>
                 <div style="text-align:center; margin-top:15px;">
-                    <a href="register.php" style="color: #0B1B2B; text-decoration: none;">ليس لديك حساب؟ إنشاء حساب جديد</a>
+                    <a href="register.php" style="color: #0B1B2B; text-decoration: none;">ظ„ظٹط³ ظ„ط¯ظٹظƒ ط­ط³ط§ط¨طں ط¥ظ†ط´ط§ط، ط­ط³ط§ط¨ ط¬ط¯ظٹط¯</a>
                 </div>
             </form>
 
             <div class="social-divider">
-                <span>أو عبر</span>
+                <span>ط£ظˆ ط¹ط¨ط±</span>
             </div>
 
             <div class="social-login">
@@ -123,7 +123,7 @@ include '../includes/header.php';
       .then((result) => {
         const user = result.user;
         
-        // إرسال البيانات لمعالجتها في السيرفر لفتح جلسة PHP
+        // ط¥ط±ط³ط§ظ„ ط§ظ„ط¨ظٹط§ظ†ط§طھ ظ„ظ…ط¹ط§ظ„ط¬طھظ‡ط§ ظپظٹ ط§ظ„ط³ظٹط±ظپط± ظ„ظپطھط­ ط¬ظ„ط³ط© PHP
         fetch('../auth/firebase_auth.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -137,19 +137,19 @@ include '../includes/header.php';
         .then(response => response.json())
         .then(data => {
             if(data.status === 'success') {
-                window.location.href = '../index.php'; // توجيه للرئيسية بعد نجاح الدخول
+                window.location.href = '../index.php'; // طھظˆط¬ظٹظ‡ ظ„ظ„ط±ط¦ظٹط³ظٹط© ط¨ط¹ط¯ ظ†ط¬ط§ط­ ط§ظ„ط¯ط®ظˆظ„
             } else {
-                alert('فشل تسجيل الدخول: ' + data.message);
+                alert('ظپط´ظ„ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„: ' + data.message);
             }
         })
         .catch(error => {
             console.error('Error communicating with server:', error);
-            alert('حدث خطأ أثناء معالجة بيانات الدخول في السيرفر.');
+            alert('ط­ط¯ط« ط®ط·ط£ ط£ط«ظ†ط§ط، ظ…ط¹ط§ظ„ط¬ط© ط¨ظٹط§ظ†ط§طھ ط§ظ„ط¯ط®ظˆظ„ ظپظٹ ط§ظ„ط³ظٹط±ظپط±.');
         });
       }).catch((error) => {
         console.error('Firebase Auth Error:', error);
         if(error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
-            alert('خطأ في مصادقة Firebase: ' + error.message);
+            alert('ط®ط·ط£ ظپظٹ ظ…طµط§ط¯ظ‚ط© Firebase: ' + error.message);
         }
       });
   }

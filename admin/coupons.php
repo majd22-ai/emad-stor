@@ -1,33 +1,33 @@
-<?php
+﻿<?php
 session_start();
 require_once '../includes/db_connect.php';
 require_once '../includes/functions.php';
 
 check_admin();
 
-$base_url = '/emad-stor/';
+$base_url = (strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], 'localhost') !== false || strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 $message = '';
 
-// إضافة كود جديد
+// ط¥ط¶ط§ظپط© ظƒظˆط¯ ط¬ط¯ظٹط¯
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_coupon'])) {
     $code = strtoupper(trim($_POST['code'] ?? ''));
     $discount = (int)($_POST['discount'] ?? 0);
     $limit = (int)($_POST['limit'] ?? 100);
 
     if (empty($code) || $discount <= 0 || $discount > 100) {
-        $message = '<div class="alert alert-danger">الرجاء إدخال بيانات صحيحة (نسبة الخصم بين 1 و 100).</div>';
+        $message = '<div class="alert alert-danger">ط§ظ„ط±ط¬ط§ط، ط¥ط¯ط®ط§ظ„ ط¨ظٹط§ظ†ط§طھ طµط­ظٹط­ط© (ظ†ط³ط¨ط© ط§ظ„ط®طµظ… ط¨ظٹظ† 1 ظˆ 100).</div>';
     } else {
         try {
             $stmt = $pdo->prepare('INSERT INTO coupons (code, discount_percent, usage_limit) VALUES (?, ?, ?)');
             $stmt->execute([$code, $discount, $limit]);
-            $message = '<div class="alert alert-success">تمت إضافة كود الخصم بنجاح.</div>';
+            $message = '<div class="alert alert-success">طھظ…طھ ط¥ط¶ط§ظپط© ظƒظˆط¯ ط§ظ„ط®طµظ… ط¨ظ†ط¬ط§ط­.</div>';
         } catch (PDOException $e) {
-            $message = '<div class="alert alert-danger">الكود موجود مسبقاً أو حدث خطأ.</div>';
+            $message = '<div class="alert alert-danger">ط§ظ„ظƒظˆط¯ ظ…ظˆط¬ظˆط¯ ظ…ط³ط¨ظ‚ط§ظ‹ ط£ظˆ ط­ط¯ط« ط®ط·ط£.</div>';
         }
     }
 }
 
-// حذف كود
+// ط­ط°ظپ ظƒظˆط¯
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
     $pdo->prepare('DELETE FROM coupons WHERE id = ?')->execute([$id]);
@@ -35,7 +35,7 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-// جلب جميع الكوبونات
+// ط¬ظ„ط¨ ط¬ظ…ظٹط¹ ط§ظ„ظƒظˆط¨ظˆظ†ط§طھ
 $stmt = $pdo->query('SELECT * FROM coupons ORDER BY id DESC');
 $coupons = $stmt->fetchAll();
 ?>
@@ -43,7 +43,7 @@ $coupons = $stmt->fetchAll();
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة الكوبونات | فضيات ابو عماد</title>
+    <title>ط¥ط¯ط§ط±ط© ط§ظ„ظƒظˆط¨ظˆظ†ط§طھ | ظپط¶ظٹط§طھ ط§ط¨ظˆ ط¹ظ…ط§ط¯</title>
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -72,55 +72,55 @@ $coupons = $stmt->fetchAll();
 <body>
 
 <div class="sidebar">
-    <h2>لوحة التحكم</h2>
-    <a href="index.php"><i class="fas fa-home"></i> الرئيسية</a>
-    <a href="categories.php"><i class="fas fa-list"></i> إدارة الأقسام</a>
-    <a href="products.php"><i class="fas fa-box"></i> إدارة المنتجات</a>
-    <a href="orders.php"><i class="fas fa-shopping-cart"></i> إدارة الطلبات</a>
-    <a href="coupons.php" class="active"><i class="fas fa-tags"></i> إدارة الكوبونات</a>
-    <a href="users.php"><i class="fas fa-users"></i> إدارة المستخدمين</a>
-    <a href="../index.php"><i class="fas fa-store"></i> العودة للمتجر</a>
-    <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
+    <h2>ظ„ظˆط­ط© ط§ظ„طھط­ظƒظ…</h2>
+    <a href="index.php"><i class="fas fa-home"></i> ط§ظ„ط±ط¦ظٹط³ظٹط©</a>
+    <a href="categories.php"><i class="fas fa-list"></i> ط¥ط¯ط§ط±ط© ط§ظ„ط£ظ‚ط³ط§ظ…</a>
+    <a href="products.php"><i class="fas fa-box"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظ…ظ†طھط¬ط§طھ</a>
+    <a href="orders.php"><i class="fas fa-shopping-cart"></i> ط¥ط¯ط§ط±ط© ط§ظ„ط·ظ„ط¨ط§طھ</a>
+    <a href="coupons.php" class="active"><i class="fas fa-tags"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظƒظˆط¨ظˆظ†ط§طھ</a>
+    <a href="users.php"><i class="fas fa-users"></i> ط¥ط¯ط§ط±ط© ط§ظ„ظ…ط³طھط®ط¯ظ…ظٹظ†</a>
+    <a href="../index.php"><i class="fas fa-store"></i> ط§ظ„ط¹ظˆط¯ط© ظ„ظ„ظ…طھط¬ط±</a>
+    <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> طھط³ط¬ظٹظ„ ط§ظ„ط®ط±ظˆط¬</a>
 </div>
 
 <div class="content">
-    <h1>إدارة الكوبونات (Promo Codes)</h1>
+    <h1>ط¥ط¯ط§ط±ط© ط§ظ„ظƒظˆط¨ظˆظ†ط§طھ (Promo Codes)</h1>
     
     <?php echo $message; ?>
 
     <div style="display: flex; gap: 20px; align-items: flex-start;">
         <div class="card" style="flex: 1;">
-            <h2>إضافة كود جديد</h2>
+            <h2>ط¥ط¶ط§ظپط© ظƒظˆط¯ ط¬ط¯ظٹط¯</h2>
             <form action="coupons.php" method="POST">
                 <div class="input-group">
-                    <label>رمز الكود (مثال: EMAD20)</label>
+                    <label>ط±ظ…ط² ط§ظ„ظƒظˆط¯ (ظ…ط«ط§ظ„: EMAD20)</label>
                     <input type="text" name="code" required style="text-transform: uppercase;">
                 </div>
                 <div class="input-group">
-                    <label>نسبة الخصم (%)</label>
+                    <label>ظ†ط³ط¨ط© ط§ظ„ط®طµظ… (%)</label>
                     <input type="number" name="discount" min="1" max="100" required>
                 </div>
                 <div class="input-group">
-                    <label>الحد الأقصى للاستخدام (عدد المرات)</label>
+                    <label>ط§ظ„ط­ط¯ ط§ظ„ط£ظ‚طµظ‰ ظ„ظ„ط§ط³طھط®ط¯ط§ظ… (ط¹ط¯ط¯ ط§ظ„ظ…ط±ط§طھ)</label>
                     <input type="number" name="limit" value="100" min="1" required>
                 </div>
-                <button type="submit" name="add_coupon" class="btn btn-primary" style="width: 100%;">إضافة الكود</button>
+                <button type="submit" name="add_coupon" class="btn btn-primary" style="width: 100%;">ط¥ط¶ط§ظپط© ط§ظ„ظƒظˆط¯</button>
             </form>
         </div>
 
         <div class="card" style="flex: 2;">
-            <h2>الأكواد الحالية</h2>
+            <h2>ط§ظ„ط£ظƒظˆط§ط¯ ط§ظ„ط­ط§ظ„ظٹط©</h2>
             <?php if (empty($coupons)): ?>
-                <p>لا توجد أكواد خصم حالياً.</p>
+                <p>ظ„ط§ طھظˆط¬ط¯ ط£ظƒظˆط§ط¯ ط®طµظ… ط­ط§ظ„ظٹط§ظ‹.</p>
             <?php else: ?>
                 <table>
                     <thead>
                         <tr>
-                            <th>الكود</th>
-                            <th>الخصم</th>
-                            <th>الاستخدامات</th>
-                            <th>تاريخ الإضافة</th>
-                            <th>إجراء</th>
+                            <th>ط§ظ„ظƒظˆط¯</th>
+                            <th>ط§ظ„ط®طµظ…</th>
+                            <th>ط§ظ„ط§ط³طھط®ط¯ط§ظ…ط§طھ</th>
+                            <th>طھط§ط±ظٹط® ط§ظ„ط¥ط¶ط§ظپط©</th>
+                            <th>ط¥ط¬ط±ط§ط،</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -131,7 +131,7 @@ $coupons = $stmt->fetchAll();
                                 <td><?php echo $c['used_count'] . ' / ' . $c['usage_limit']; ?></td>
                                 <td><?php echo date('Y-m-d', strtotime($c['created_at'])); ?></td>
                                 <td>
-                                    <a href="coupons.php?delete=<?php echo $c['id']; ?>" class="btn btn-danger" onclick="return confirm('هل أنت متأكد من حذف هذا الكود؟');"><i class="fas fa-trash"></i> حذف</a>
+                                    <a href="coupons.php?delete=<?php echo $c['id']; ?>" class="btn btn-danger" onclick="return confirm('ظ‡ظ„ ط£ظ†طھ ظ…طھط£ظƒط¯ ظ…ظ† ط­ط°ظپ ظ‡ط°ط§ ط§ظ„ظƒظˆط¯طں');"><i class="fas fa-trash"></i> ط­ط°ظپ</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
