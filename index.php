@@ -16,7 +16,7 @@ $products = $stmt->fetchAll();
         <!-- الصورة الثانية (ضع المسار هنا) -->
         <img src="<?php echo $base_url; ?>assets/images/خواتم نسائي/wr5.jpg" alt="فضيات ابو عماد" class="hero-image slide">
         <!-- الصورة الثالثة (ضع المسار هنا) -->
-        <img src="<?php echo $base_url; ?>assets/images/منتجات/P25.jpg" alt="فضيات ابو عماد" class="hero-image slide">
+        <img src="<?php echo $base_url; ?>assets/images/منتجات/p25_hero.jpg" alt="فضيات ابو عماد" class="hero-image slide">
     </div>
     <div class="hero-content">
         <h1>  ابو عماد للفضة والعقيق  </h1>

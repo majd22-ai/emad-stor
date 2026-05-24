@@ -145,7 +145,7 @@
         <div class="blog-grid">
             
             <div class="blog-card">
-                <img src="../../assets/images/منتجات/blog1.jpeg" alt="العقيق اليماني" class="blog-image" onerror="this.src='https://placehold.co/600x400/0B1B2B/FFD966?text=العقيق+اليماني'">
+                <img src="<?php echo $base_url; ?>assets/images/منتجات/blog1.jpeg" alt="العقيق اليماني" class="blog-image" onerror="this.src='https://placehold.co/600x400/0B1B2B/FFD966?text=العقيق+اليماني'">
                 <div class="blog-content">
                     <div class="blog-date"><i class="far fa-calendar-alt"></i> 18 مايو، 2026</div>
                     <h3 class="blog-title">كيف تميز العقيق اليماني الأصلي عن المقلد؟</h3>
@@ -155,7 +155,7 @@
             </div>
 
             <div class="blog-card">
-                <img src="../../assets/images/منتجات/p22.jpg" alt="العناية بالفضة" class="blog-image" onerror="this.src='https://placehold.co/600x400/0B1B2B/FFD966?text=العناية+بالفضة'">
+                <img src="<?php echo $base_url; ?>assets/images/منتجات/P22.jpg" alt="العناية بالفضة" class="blog-image" onerror="this.src='https://placehold.co/600x400/0B1B2B/FFD966?text=العناية+بالفضة'">
                 <div class="blog-content">
                     <div class="blog-date"><i class="far fa-calendar-alt"></i> 10 أبريل، 2026</div>
                     <h3 class="blog-title">أفضل 5 طرق للعناية بالمجوهرات الفضية</h3>
@@ -165,7 +165,7 @@
             </div>
 
             <div class="blog-card">
-                <img src="../../assets/images/منتجات/p35.jpg" alt="تاريخ الفضة" class="blog-image" onerror="this.src='https://placehold.co/600x400/0B1B2B/FFD966?text=تاريخ+الفضة'">
+                <img src="<?php echo $base_url; ?>assets/images/منتجات/p35.jpg" alt="تاريخ الفضة" class="blog-image" onerror="this.src='https://placehold.co/600x400/0B1B2B/FFD966?text=تاريخ+الفضة'">
                 <div class="blog-content">
                     <div class="blog-date"><i class="far fa-calendar-alt"></i> 25 مارس، 2026</div>
                     <h3 class="blog-title">تاريخ الفضة وصياغتها في الثقافة اليمنية</h3>
