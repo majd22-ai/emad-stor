@@ -6,7 +6,7 @@ require_once '../includes/functions.php';
 // ط­ظ…ط§ظٹط© ط§ظ„طµظپط­ط©
 check_admin();
 
-$base_url = (strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], 'localhost') !== false || strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
+$base_url = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 
 // ظ…ط¹ط§ظ„ط¬ط© طھط؛ظٹظٹط± طµظ„ط§ط­ظٹط§طھ ط§ظ„ظ…ط³طھط®ط¯ظ…
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['action'])) {

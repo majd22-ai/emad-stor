@@ -6,7 +6,7 @@ require_once '../includes/functions.php';
 // ط­ظ…ط§ظٹط© ط§ظ„طµظپط­ط©
 check_admin();
 
-$base_url = (strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], 'localhost') !== false || strpos($base_url = '/emad-stor/';SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
+$base_url = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
