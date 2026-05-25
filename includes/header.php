@@ -24,10 +24,30 @@ try {
         used_count INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )");
+} catch (Exception $e) {}
+
+try {
+    global $pdo;
     $pdo->exec("ALTER TABLE products ALTER COLUMN image_url TYPE TEXT");
+} catch (Exception $e) {}
+
+try {
+    global $pdo;
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_receipt TEXT");
     $pdo->exec("ALTER TABLE orders ALTER COLUMN payment_receipt TYPE TEXT");
+} catch (Exception $e) {}
+
+try {
+    global $pdo;
     $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_code VARCHAR(50) NULL");
     $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_amount DECIMAL(10,2) DEFAULT 0.00");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS latitude VARCHAR(50) NULL");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS longitude VARCHAR(50) NULL");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_fee DECIMAL(10,2) DEFAULT 0.00");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(100) NULL");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS shipping_method VARCHAR(100) NULL");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS currency VARCHAR(10) NULL");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS exchange_rate DECIMAL(10,2) DEFAULT 1.00");
 } catch (Exception $e) {}
 
 // إعداد متغيرات الـ SEO الافتراضية
