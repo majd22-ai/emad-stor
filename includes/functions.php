@@ -34,7 +34,8 @@ $currencies = [
 
 function get_current_currency() {
     if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+        session_set_cookie_params(['lifetime' => 60 * 60 * 24 * 30, 'path' => '/', 'samesite' => 'Lax']);
+    session_start();
     }
     return $_SESSION['currency'] ?? 'USD';
 }

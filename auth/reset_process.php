@@ -1,5 +1,6 @@
 <?php
-session_start();
+session_set_cookie_params(['lifetime' => 60 * 60 * 24 * 30, 'path' => '/', 'samesite' => 'Lax']);
+    session_start();
 require_once '../includes/db_connect.php';
 
 if (!isset($_SESSION['reset_email']) || !isset($_SESSION['verified_token'])) {

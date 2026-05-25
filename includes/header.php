@@ -1,5 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params(['lifetime' => 60 * 60 * 24 * 30, 'path' => '/', 'samesite' => 'Lax']);
     session_start();
 }
 // require_once __DIR__ . '/db_connect.php'; // يمكن تفعيلها عند الحاجة للاتصال بالقاعدة في جميع الصفحات
@@ -34,7 +35,7 @@ $page_image = $page_image ?? $full_base_url . 'assets/images/منتجات/p35.jp
     <meta name="twitter:card" content="summary_large_image">
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/fontawesome.min.css">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>assets/css/style.css?v=<?php echo filemtime(__DIR__ . '/../assets/css/style.css'); ?>">
     <!-- متغيرات العملة للسكربت -->
     <script>
         const currencyRate = <?php echo get_currency_rate(); ?>;
