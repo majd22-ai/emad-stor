@@ -302,6 +302,7 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                             <i class="fas fa-motorcycle"></i>
                             <select name="shipping_method" id="shipping_method" onchange="resetCalculation()" required style="width: 100%; padding: 0.9rem 2.8rem 0.9rem 1rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; transition: 0.2s; background: #F9FBFD; cursor: pointer; outline: none;">
                                 <option value="توصيل داخل صنعاء">طريقة الشحن: توصيل داخل صنعاء (بحسب النطاقات حول المتجر)</option>
+                                <option value="شحن خارج صنعاء">طريقة الشحن: شحن خارج صنعاء</option>
                             </select>
                         </div>
                         
@@ -309,6 +310,11 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                             <p style="font-size: 0.95rem; color: #4A5568; margin-bottom: 1rem;">سيتم حساب رسوم التوصيل آلياً بناءً على عنوانك: <strong id="displayAddress" style="color: #0B1B2B;"></strong></p>
                             <button type="button" class="login-btn" onclick="calculateShipping()" style="width: 100%; background: #0d47a1; margin-bottom: 1rem;"><i class="fas fa-calculator"></i> حساب رسوم التوصيل</button>
                             <div id="distanceInfo" style="font-size: 1rem; font-weight: bold; text-align: center;"></div>
+                        </div>
+
+                        <div id="outsideShippingInfo" style="display: none; margin-top: 1.5rem; background: #e8f5e9; padding: 1.5rem; border-radius: 12px; border: 1px solid #c8e6c9; text-align: center;">
+                            <p style="color: #2e7d32; font-weight: bold; margin-bottom: 10px;">سيتم التنسيق معك من خلال خدمة العملاء بعد إتمام الطلب لتحديد رسوم وتفاصيل الشحن.</p>
+                            <a href="https://wa.me/967771771814" target="_blank" style="color: #25D366; font-weight: bold; text-decoration: none; font-size: 1.1rem;"><i class="fab fa-whatsapp"></i> تواصل عبر واتساب: 771771814</a>
                         </div>
 
                         <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
@@ -391,10 +397,28 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
             };
 
             function resetCalculation() {
-                document.getElementById('distanceInfo').innerText = '';
-                document.getElementById('delivery_fee').value = 0;
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('deliveryFeeRow').style.display = 'none';
+                var method = document.getElementById('shipping_method').value;
+                if (method === 'شحن خارج صنعاء') {
+                    document.getElementById('shippingCalculation').style.display = 'none';
+                    if (document.getElementById('outsideShippingInfo')) {
+                        document.getElementById('outsideShippingInfo').style.display = 'block';
+                    }
+                    document.getElementById('distanceInfo').innerText = '';
+                    document.getElementById('delivery_fee').value = 0;
+                    document.getElementById('submitBtn').disabled = false;
+                    document.getElementById('deliveryFeeRow').style.display = 'none';
+                    document.getElementById('latitude').value = "0";
+                    document.getElementById('longitude').value = "0";
+                } else {
+                    document.getElementById('shippingCalculation').style.display = 'block';
+                    if (document.getElementById('outsideShippingInfo')) {
+                        document.getElementById('outsideShippingInfo').style.display = 'none';
+                    }
+                    document.getElementById('distanceInfo').innerText = '';
+                    document.getElementById('delivery_fee').value = 0;
+                    document.getElementById('submitBtn').disabled = true;
+                    document.getElementById('deliveryFeeRow').style.display = 'none';
+                }
                 
                 // Reset Total
                 var baseTotal = parseFloat(document.getElementById('finalTotalDisplay').getAttribute('data-base-total'));
