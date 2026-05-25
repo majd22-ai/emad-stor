@@ -40,10 +40,11 @@ include 'includes/header.php';
                 <div style="background: #F8FAFE; padding: 1.5rem; border-radius: 12px; border: 1px solid #E2E8F0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #E2E8F0; padding-bottom: 0.5rem;">
                         <h4 style="color: #0B1B2B;">طلب رقم: #<?php echo $order['id']; ?></h4>
-                        <span style="background: <?php echo ($order['status'] === 'completed') ? '#4CAF50' : '#FF9800'; ?>; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem;">
+                        <span style="background: <?php echo ($order['status'] === 'delivered' || $order['status'] === 'completed') ? '#4CAF50' : (($order['status'] === 'cancelled') ? '#F44336' : (($order['status'] === 'shipped') ? '#2196F3' : '#FF9800')); ?>; color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.9rem;">
                             <?php 
                                 if($order['status'] === 'pending') echo 'قيد المراجعة';
-                                elseif($order['status'] === 'completed') echo 'مكتمل';
+                                elseif($order['status'] === 'shipped') echo 'تم الشحن';
+                                elseif($order['status'] === 'delivered' || $order['status'] === 'completed') echo 'مكتمل وتم التسليم';
                                 elseif($order['status'] === 'cancelled') echo 'ملغي';
                                 else echo htmlspecialchars($order['status']); 
                             ?>
