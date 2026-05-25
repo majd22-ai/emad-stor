@@ -455,11 +455,11 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                     if (osrmData && osrmData.code === 'Ok' && osrmData.routes && osrmData.routes.length > 0) {
                         var distanceKm = osrmData.routes[0].distance / 1000;
                         
-                        var feeYer = 700; // النطاق الأول (حتى 3 كم)
-                        if (distanceKm > 7) {
-                            feeYer = 1500; // النطاق الثالث الواسع (أكثر من 7 كم)
-                        } else if (distanceKm > 3) {
-                            feeYer = 1000; // النطاق الثاني المتوسط (من 3 إلى 7 كم)
+                        var feeYer = 700; // النطاق الأول: قريب (0 - 4 كم)
+                        if (distanceKm > 8) {
+                            feeYer = 1500; // النطاق الثالث: بعيد (أكثر من 8 كم)
+                        } else if (distanceKm > 4) {
+                            feeYer = 1000; // النطاق الثاني: متوسط (من 4 إلى 8 كم)
                         }
                         
                         var yerRate = <?php echo get_currency_rate('YER'); ?>;
