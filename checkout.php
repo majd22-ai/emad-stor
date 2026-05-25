@@ -152,7 +152,7 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
 
 <!-- خريطة Leaflet تم إزالتها بناءً على طلب النظام الجديد -->
 
-<div class="checkout-container" style="max-width: 800px; margin: 4rem auto; padding: 2rem; background: #fff; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+<div class="checkout-container">
     <?php if ($success): ?>
         <div class="success-message" style="text-align: center; padding: 3rem 1rem;">
             <i class="fas fa-check-circle" style="font-size: 4rem; color: #4CAF50; margin-bottom: 1rem;"></i>

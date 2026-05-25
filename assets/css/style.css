@@ -134,8 +134,9 @@ body {
 .side-menu {
     position: fixed;
     top: 0;
-    right: -300px;
-    width: 280px;
+    right: -100%;
+    width: 100%;
+    max-width: 300px;
     height: 100%;
     background-color: #0B1B2B;
     color: white;
@@ -492,8 +493,9 @@ body {
 .cart-sidebar {
     position: fixed;
     top: 0;
-    right: -350px;
-    width: 320px;
+    right: -100%;
+    width: 100%;
+    max-width: 350px;
     height: 100%;
     background: white;
     transition: 0.3s;
@@ -731,6 +733,76 @@ body {
     .footer-container {
         flex-direction: column;
     }
+    .qty-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+    }
+    .cart-item-quantity {
+        padding: 5px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .products-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .product-img-wrapper {
+        height: 160px;
+    }
+    .product h3 {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.5rem 0.2rem;
+    }
+    .price-info-row {
+        padding: 0.3rem 0.5rem;
+    }
+    .price {
+        font-size: 0.85rem;
+        padding: 0.2rem 0.5rem;
+    }
+    .info-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+    .add-cart {
+        width: calc(100% - 1rem);
+        margin: 0.5rem 0.5rem 0.8rem;
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .size-selection {
+        margin: 0.5rem 0.5rem 0.5rem;
+    }
+    .ring-size-select {
+        padding: 0.4rem;
+        font-size: 0.8rem;
+    }
+    .additional-content {
+        padding: 0 10px;
+        margin: 1.5rem auto;
+    }
+    .checkout-container {
+        margin: 1rem;
+        padding: 1.5rem 1rem;
+        border-radius: 12px;
+    }
+    .login-card {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+}
+
+/* ========== CHECKOUT ========== */
+.checkout-container {
+    max-width: 800px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
 /* ========== LOGIN / REGISTER ========== */
