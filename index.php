@@ -142,9 +142,18 @@ $products = $stmt->fetchAll();
 <div class="modal" id="categoryModal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>اختر المجموعة</h2>
-        <div class="dropdown women"><a href="#" class="main-link">المجموعة النسائية</a><ul class="dropdown-menu"><li><a href="category.php?slug=wo-rings">خواتم</a></li><li><a href="category.php?slug=wo-necklaces">قلائد</a></li><li><a href="category.php?slug=wo-bracelets">أساور</a></li><li><a href="category.php?slug=wo-earrings">أقراط</a></li></ul></div>
-        <div class="dropdown men"><a href="#" class="main-link">المجموعة الرجالية</a><ul class="dropdown-menu"><li><a href="category.php?slug=me-rings">خواتم</a></li><li><a href="category.php?slug=men-beads">مسابح</a></li></ul></div>
+        <h2>اختر القسم</h2>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+            <?php
+            try {
+                $stmt_cats = $pdo->query("SELECT * FROM categories ORDER BY id ASC");
+                $modal_categories = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($modal_categories as $cat) {
+                    echo '<a href="category.php?slug=' . htmlspecialchars($cat['slug']) . '" style="padding: 10px; background: #f4f7fa; border-radius: 8px; text-decoration: none; color: #0b1b2b; font-weight: bold; border: 1px solid #e2e8f0;">' . htmlspecialchars($cat['name']) . '</a>';
+                }
+            } catch (Exception $e) {}
+            ?>
+        </div>
     </div>
 </div>
 

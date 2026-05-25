@@ -136,12 +136,24 @@ $page_image = $page_image ?? $full_base_url . 'assets/images/منتجات/p35.jp
     </div>
     <ul class="side-menu-links">
         <li><a href="<?php echo $base_url; ?>index.php"><i class="fas fa-home"></i> الرئيسية</a></li>
-        <li><a href="<?php echo $base_url; ?>category.php?slug=me-rings"><i class="fas fa-ring"></i> خواتم رجالية</a></li>
-        <li><a href="<?php echo $base_url; ?>category.php?slug=men-beads"><i class="fas fa-praying-hands"></i> مسابح</a></li>
-        <li><a href="<?php echo $base_url; ?>category.php?slug=wo-rings"><i class="fas fa-gem"></i> خواتم نسائية</a></li>
-        <li><a href="<?php echo $base_url; ?>category.php?slug=wo-necklaces"><i class="fas fa-layer-group"></i> قلائد</a></li>
-        <li><a href="<?php echo $base_url; ?>category.php?slug=wo-bracelets"><i class="fas fa-hand-sparkles"></i> أساور</a></li>
-        <li><a href="<?php echo $base_url; ?>category.php?slug=wo-earrings"><i class="fas fa-ear-listen"></i> أقراط</a></li>
+        <?php
+        try {
+            global $pdo;
+            $stmt_cats = $pdo->query("SELECT * FROM categories ORDER BY id ASC");
+            $all_categories = $stmt_cats->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($all_categories as $cat) {
+                // Determine icon
+                $icon = 'fa-list';
+                if (strpos($cat['slug'], 'ring') !== false) $icon = 'fa-ring';
+                elseif (strpos($cat['slug'], 'bead') !== false) $icon = 'fa-praying-hands';
+                elseif (strpos($cat['slug'], 'necklace') !== false) $icon = 'fa-layer-group';
+                elseif (strpos($cat['slug'], 'bracelet') !== false) $icon = 'fa-hand-sparkles';
+                elseif (strpos($cat['slug'], 'earring') !== false) $icon = 'fa-ear-listen';
+                
+                echo '<li><a href="' . $base_url . 'category.php?slug=' . htmlspecialchars($cat['slug']) . '"><i class="fas ' . $icon . '"></i> ' . htmlspecialchars($cat['name']) . '</a></li>';
+            }
+        } catch (Exception $e) {}
+        ?>
         <li class="contact-link"><a href="#contact"><i class="fas fa-headset"></i> تواصل معنا</a></li>
     </ul>
 </div>
