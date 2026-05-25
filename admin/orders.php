@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['s
 }
 
 // جلب الطلبات
-$stmt = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC");
+$stmt = $pdo->query("SELECT id, user_id, customer_name, customer_phone, customer_address, total_price, status, created_at, coupon_code, discount_amount, delivery_fee, payment_method, shipping_method, currency, exchange_rate, latitude, longitude, CASE WHEN payment_receipt IS NOT NULL AND payment_receipt != '' THEN 1 ELSE 0 END as has_receipt FROM orders ORDER BY created_at DESC");
 $orders = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -231,25 +231,12 @@ $orders = $stmt->fetchAll();
                                     </div>
                                     <?php endif; ?>
                                     
-                                    <?php if (!empty($order['payment_receipt'])): ?>
+                                    <?php if (!empty($order['has_receipt']) && $order['has_receipt'] == 1): ?>
                                     <div style="margin: 15px 0; padding: 10px; background: #e3f2fd; border-radius: 8px;">
                                         <h5 style="margin-top: 0; color: #0d47a1;">صورة الإيصال / الحوالة:</h5>
-                                        <?php
-                                        if (strpos($order['payment_receipt'], 'data:') === 0) {
-                                            if (strpos($order['payment_receipt'], 'application/pdf') !== false) {
-                                                echo '<a href="' . htmlspecialchars($order['payment_receipt']) . '" download="receipt.pdf" class="btn" style="background-color: #0056b3; margin-top: 5px;"><i class="fas fa-file-pdf"></i> تحميل ملف PDF</a>';
-                                            } else {
-                                                echo '<a href="' . htmlspecialchars($order['payment_receipt']) . '" target="_blank"><img src="' . htmlspecialchars($order['payment_receipt']) . '" alt="إيصال الدفع" style="max-width: 200px; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px;"></a>';
-                                            }
-                                        } else {
-                                            $receipt_ext = strtolower(pathinfo($order['payment_receipt'], PATHINFO_EXTENSION));
-                                            if ($receipt_ext === 'pdf') {
-                                                echo '<a href="../' . htmlspecialchars($order['payment_receipt']) . '" target="_blank" class="btn" style="background-color: #0056b3; margin-top: 5px;"><i class="fas fa-file-pdf"></i> عرض ملف PDF</a>';
-                                            } else {
-                                                echo '<a href="../' . htmlspecialchars($order['payment_receipt']) . '" target="_blank"><img src="../' . htmlspecialchars($order['payment_receipt']) . '" alt="إيصال الدفع" style="max-width: 200px; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px;"></a>';
-                                            }
-                                        }
-                                        ?>
+                                        <a href="view_receipt.php?id=<?php echo $order['id']; ?>" target="_blank" class="btn" style="background-color: #0056b3; margin-top: 5px;">
+                                            <i class="fas fa-external-link-alt"></i> عرض إيصال الدفع
+                                        </a>
                                     </div>
                                     <?php endif; ?>
                                     
