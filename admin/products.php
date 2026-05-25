@@ -15,24 +15,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $description = trim($_POST['description']);
     $price = (float)$_POST['price'];
     
-    // معالجة رفع الصورة
+    // معالجة رفع الصورة وتحويلها إلى Base64
     $image_url = '';
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = '../assets/images/products/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-        $fileName = time() . '_' . basename($_FILES['image']['name']);
-        $targetFilePath = $uploadDir . $fileName;
+        $fileType = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif', 'webp');
         
-        $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-        
-        if (in_array(strtolower($fileType), $allowTypes)) {
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
-                $image_url = 'assets/images/products/' . $fileName;
+        if (in_array($fileType, $allowTypes)) {
+            $imageContent = file_get_contents($_FILES['image']['tmp_name']);
+            if ($imageContent !== false) {
+                $base64 = base64_encode($imageContent);
+                $mime = mime_content_type($_FILES['image']['tmp_name']);
+                if (!$mime) {
+                    // Fallback MIME
+                    $mime = 'image/' . ($fileType === 'jpg' ? 'jpeg' : $fileType);
+                }
+                $image_url = 'data:' . $mime . ';base64,' . $base64;
             } else {
-                $_SESSION['error'] = "فشل في رفع الصورة.";
+                $_SESSION['error'] = "فشل في قراءة الصورة.";
             }
         } else {
             $_SESSION['error'] = "عذراً، فقط صيغ JPG, JPEG, PNG, GIF مسموحة.";
@@ -191,7 +191,11 @@ $products = $pdo->query("
                 <tr>
                     <td>
                         <?php if (!empty($prod['image_url'])): ?>
-                            <img src="../<?php echo htmlspecialchars($prod['image_url']); ?>" alt="img" class="prod-img">
+                            <?php if (strpos($prod['image_url'], 'data:image') === 0): ?>
+                                <img src="<?php echo htmlspecialchars($prod['image_url']); ?>" alt="img" class="prod-img">
+                            <?php else: ?>
+                                <img src="../<?php echo htmlspecialchars($prod['image_url']); ?>" alt="img" class="prod-img">
+                            <?php endif; ?>
                         <?php else: ?>
                             <span>بدون صورة</span>
                         <?php endif; ?>

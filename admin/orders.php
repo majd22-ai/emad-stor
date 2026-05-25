@@ -235,11 +235,19 @@ $orders = $stmt->fetchAll();
                                     <div style="margin: 15px 0; padding: 10px; background: #e3f2fd; border-radius: 8px;">
                                         <h5 style="margin-top: 0; color: #0d47a1;">صورة الإيصال / الحوالة:</h5>
                                         <?php
-                                        $receipt_ext = strtolower(pathinfo($order['payment_receipt'], PATHINFO_EXTENSION));
-                                        if ($receipt_ext === 'pdf') {
-                                            echo '<a href="../' . htmlspecialchars($order['payment_receipt']) . '" target="_blank" class="btn" style="background-color: #0056b3; margin-top: 5px;"><i class="fas fa-file-pdf"></i> عرض ملف PDF</a>';
+                                        if (strpos($order['payment_receipt'], 'data:') === 0) {
+                                            if (strpos($order['payment_receipt'], 'application/pdf') !== false) {
+                                                echo '<a href="' . htmlspecialchars($order['payment_receipt']) . '" download="receipt.pdf" class="btn" style="background-color: #0056b3; margin-top: 5px;"><i class="fas fa-file-pdf"></i> تحميل ملف PDF</a>';
+                                            } else {
+                                                echo '<a href="' . htmlspecialchars($order['payment_receipt']) . '" target="_blank"><img src="' . htmlspecialchars($order['payment_receipt']) . '" alt="إيصال الدفع" style="max-width: 200px; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px;"></a>';
+                                            }
                                         } else {
-                                            echo '<a href="../' . htmlspecialchars($order['payment_receipt']) . '" target="_blank"><img src="../' . htmlspecialchars($order['payment_receipt']) . '" alt="إيصال الدفع" style="max-width: 200px; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px;"></a>';
+                                            $receipt_ext = strtolower(pathinfo($order['payment_receipt'], PATHINFO_EXTENSION));
+                                            if ($receipt_ext === 'pdf') {
+                                                echo '<a href="../' . htmlspecialchars($order['payment_receipt']) . '" target="_blank" class="btn" style="background-color: #0056b3; margin-top: 5px;"><i class="fas fa-file-pdf"></i> عرض ملف PDF</a>';
+                                            } else {
+                                                echo '<a href="../' . htmlspecialchars($order['payment_receipt']) . '" target="_blank"><img src="../' . htmlspecialchars($order['payment_receipt']) . '" alt="إيصال الدفع" style="max-width: 200px; max-height: 200px; border-radius: 4px; border: 1px solid #ccc; margin-top: 5px;"></a>';
+                                            }
                                         }
                                         ?>
                                     </div>

@@ -31,28 +31,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $description = trim($_POST['description']);
     $price = (float)$_POST['price'];
     
-    // معالجة رفع الصورة إن وجدت
+    // معالجة رفع الصورة إن وجدت وتحويلها إلى Base64
     $image_url = $product['image_url'];
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = '../assets/images/products/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-        $fileName = time() . '_' . basename($_FILES['image']['name']);
-        $targetFilePath = $uploadDir . $fileName;
+        $fileType = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif', 'webp');
         
-        $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
-        
-        if (in_array(strtolower($fileType), $allowTypes)) {
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
-                $image_url = 'assets/images/products/' . $fileName;
-                // حذف الصورة القديمة إذا لزم الأمر
-                if (!empty($product['image_url']) && file_exists('../' . $product['image_url'])) {
-                    unlink('../' . $product['image_url']);
+        if (in_array($fileType, $allowTypes)) {
+            $imageContent = file_get_contents($_FILES['image']['tmp_name']);
+            if ($imageContent !== false) {
+                $base64 = base64_encode($imageContent);
+                $mime = mime_content_type($_FILES['image']['tmp_name']);
+                if (!$mime) {
+                    $mime = 'image/' . ($fileType === 'jpg' ? 'jpeg' : $fileType);
                 }
+                $image_url = 'data:' . $mime . ';base64,' . $base64;
             } else {
-                $error = "فشل في رفع الصورة الجديدة.";
+                $error = "فشل في قراءة الصورة الجديدة.";
             }
         } else {
             $error = "عذراً، فقط صيغ JPG, JPEG, PNG, GIF مسموحة.";
@@ -148,7 +143,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             <div class="form-group">
                 <label>صورة المنتج الحالية:</label>
                 <?php if (!empty($product['image_url'])): ?>
-                    <img src="../<?php echo htmlspecialchars($product['image_url']); ?>" alt="صورة المنتج" class="prod-img-preview">
+                    <?php if (strpos($product['image_url'], 'data:image') === 0): ?>
+                        <img src="<?php echo htmlspecialchars($product['image_url']); ?>" alt="صورة المنتج" class="prod-img-preview">
+                    <?php else: ?>
+                        <img src="../<?php echo htmlspecialchars($product['image_url']); ?>" alt="صورة المنتج" class="prod-img-preview">
+                    <?php endif; ?>
                 <?php else: ?>
                     <p>بدون صورة</p>
                 <?php endif; ?>

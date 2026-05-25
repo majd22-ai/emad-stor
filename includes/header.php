@@ -8,7 +8,28 @@ require_once __DIR__ . '/db_connect.php';
 require_once __DIR__ . '/functions.php';
 
 // تحديد المسار الأساسي لضمان عمل الروابط بشكل صحيح (سواء على السيرفر المحلي أو الاستضافة)
-$base_url = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor/' : '/';
+$base_url = '/'; 
+if (strpos($_SERVER['REQUEST_URI'], '/emad-stor/') !== false) {
+    $base_url = '/emad-stor/';
+}
+
+// تحديث قاعدة البيانات تلقائياً لدعم الصور المحولة لـ Base64
+try {
+    global $pdo;
+    $pdo->exec("CREATE TABLE IF NOT EXISTS coupons (
+        id SERIAL PRIMARY KEY,
+        code VARCHAR(50) UNIQUE NOT NULL,
+        discount_percent INTEGER NOT NULL,
+        usage_limit INTEGER DEFAULT 100,
+        used_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )");
+    $pdo->exec("ALTER TABLE products ALTER COLUMN image_url TYPE TEXT");
+    $pdo->exec("ALTER TABLE orders ALTER COLUMN payment_receipt TYPE TEXT");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS coupon_code VARCHAR(50) NULL");
+    $pdo->exec("ALTER TABLE orders ADD COLUMN IF NOT EXISTS discount_amount DECIMAL(10,2) DEFAULT 0.00");
+} catch (Exception $e) {}
+
 // إعداد متغيرات الـ SEO الافتراضية
 $page_title = $page_title ?? 'فضيات ابو عماد | الفضة والعقيق اليماني';
 $page_desc = $page_desc ?? 'متجر فضيات أبو عماد يقدم أرقى الخواتم والمسابح من الفضة الخالصة المرصعة بالعقيق اليماني الأصلي. تسوق الآن.';

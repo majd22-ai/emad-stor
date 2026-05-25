@@ -47,30 +47,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($name) || empty($phone) || empty($address)) {
         $error = 'الرجاء تعبئة جميع الحقول المطلوبة.';
     } else {
-        // معالجة رفع صورة الإيصال
+        // معالجة رفع صورة الإيصال كـ Base64
         if ($payment_method !== 'الدفع عند الاستلام' && isset($_FILES['payment_receipt']) && $_FILES['payment_receipt']['error'] === UPLOAD_ERR_OK) {
-            $upload_dir = 'uploads/receipts/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
-            }
             $file_extension = strtolower(pathinfo($_FILES['payment_receipt']['name'], PATHINFO_EXTENSION));
-            $allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf'];
+            $allowed_extensions = ['jpg', 'jpeg', 'png', 'pdf', 'webp'];
             
-            // Security: التحقق من نوع الملف الحقيقي MIME Type
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mime_type = finfo_file($finfo, $_FILES['payment_receipt']['tmp_name']);
             finfo_close($finfo);
-            $allowed_mimes = ['image/jpeg', 'image/png', 'application/pdf'];
+            $allowed_mimes = ['image/jpeg', 'image/png', 'application/pdf', 'image/webp'];
             
             if (in_array($file_extension, $allowed_extensions) && in_array($mime_type, $allowed_mimes)) {
-                // اسم عشوائي قوي جداً لمنع التخمين
-                $file_name = bin2hex(random_bytes(16)) . '_' . time() . '.' . $file_extension;
-                $target_file = $upload_dir . $file_name;
-                
-                if (move_uploaded_file($_FILES['payment_receipt']['tmp_name'], $target_file)) {
-                    $receipt_path = $target_file;
+                $fileContent = file_get_contents($_FILES['payment_receipt']['tmp_name']);
+                if ($fileContent !== false) {
+                    $base64 = base64_encode($fileContent);
+                    $receipt_path = 'data:' . $mime_type . ';base64,' . $base64;
                 } else {
-                    $error = 'حدث خطأ أثناء حفظ صورة الإيصال.';
+                    $error = 'حدث خطأ أثناء قراءة صورة الإيصال.';
                 }
             } else {
                 $error = 'عذراً، يسمح فقط برفع الصور الحقيقية (JPG, PNG) أو ملفات PDF الصالحة.';
