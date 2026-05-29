@@ -116,17 +116,7 @@ $products = $pdo->query("
 </head>
 <body>
 
-<div class="sidebar">
-    <h2>لوحة التحكم</h2>
-    <a href="index.php"><i class="fas fa-home"></i> الرئيسية</a>
-    <a href="categories.php"><i class="fas fa-list"></i> إدارة الأقسام</a>
-    <a href="products.php" class="active"><i class="fas fa-box"></i> إدارة المنتجات</a>
-    <a href="orders.php"><i class="fas fa-shopping-cart"></i> إدارة الطلبات</a>
-    <a href="coupons.php"><i class="fas fa-tags"></i> إدارة الكوبونات</a>
-    <a href="users.php"><i class="fas fa-users"></i> إدارة المستخدمين</a>
-    <a href="../index.php"><i class="fas fa-store"></i> العودة للمتجر</a>
-    <a href="../auth/logout.php"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</a>
-</div>
+<?php include 'sidebar.php'; ?>
 
 <div class="content">
     <h1>إدارة المنتجات</h1>

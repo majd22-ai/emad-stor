@@ -63,15 +63,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'], $_POST['s
     }
 }
 
-// جلب الطلبات
-$stmt = $pdo->query("SELECT id, user_id, customer_name, customer_phone, customer_address, total_price, status, created_at, coupon_code, discount_amount, delivery_fee, payment_method, shipping_method, currency, exchange_rate, latitude, longitude, CASE WHEN payment_receipt IS NOT NULL AND payment_receipt != '' THEN 1 ELSE 0 END as has_receipt FROM orders WHERE status != 'delivered' ORDER BY created_at DESC");
+// جلب المبيعات المكتملة فقط
+$stmt = $pdo->query("SELECT id, user_id, customer_name, customer_phone, customer_address, total_price, status, created_at, coupon_code, discount_amount, delivery_fee, payment_method, shipping_method, currency, exchange_rate, latitude, longitude, CASE WHEN payment_receipt IS NOT NULL AND payment_receipt != '' THEN 1 ELSE 0 END as has_receipt FROM orders WHERE status = 'delivered' ORDER BY created_at DESC");
 $orders = $stmt->fetchAll();
+
+$total_revenue = 0;
+foreach ($orders as $o) {
+    if (!empty($o['currency']) && !empty($o['exchange_rate'])) {
+        $total_revenue += $o['total_price'] * $o['exchange_rate'];
+    } else {
+        $total_revenue += $o['total_price'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة الطلبات | فضيات ابو عماد</title>
+    <title>إدارة المبيعات | فضيات ابو عماد</title>
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -106,7 +115,11 @@ $orders = $stmt->fetchAll();
 <?php include 'sidebar.php'; ?>
 
 <div class="content">
-    <h1>إدارة الطلبات</h1>
+    <h1>إدارة المبيعات</h1>
+    <div style="background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 1.2rem; border: 1px solid #c8e6c9;">
+        <i class="fas fa-coins"></i> <strong>إجمالي أرباح المبيعات المكتملة: </strong> 
+        <?php echo format_price($total_revenue); ?>
+    </div>
     
     <?php if(isset($success)): ?>
         <div class="alert alert-success"><?php echo $success; ?></div>
@@ -251,18 +264,9 @@ $orders = $stmt->fetchAll();
                                         ?>
                                     </ul>
 
-                                    <form action="" method="POST" style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
-                                        <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
-                                        <input type="hidden" name="order_id" value="<?php echo $order['id']; ?>">
-                                        <label>تحديث الحالة:</label>
-                                        <select name="status" style="padding: 5px;">
-                                            <option value="pending" <?php echo $order['status']=='pending'?'selected':''; ?>>قيد المراجعة</option>
-                                            <option value="shipped" <?php echo $order['status']=='shipped'?'selected':''; ?>>تم الشحن</option>
-                                            <option value="delivered" <?php echo $order['status']=='delivered'?'selected':''; ?>>مكتمل</option>
-                                            <option value="cancelled" <?php echo $order['status']=='cancelled'?'selected':''; ?>>ملغي</option>
-                                        </select>
-                                        <button type="submit" class="btn" style="padding: 5px 10px;">تحديث</button>
-                                    </form>
+                                    <div style="margin-top: 15px; border-top: 1px solid #ccc; padding-top: 10px;">
+                                        <p style="color: #155724; font-weight: bold;"><i class="fas fa-check-circle"></i> هذا الطلب مكتمل وتم تسليمه بنجاح.</p>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
