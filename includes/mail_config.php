@@ -24,6 +24,7 @@ function sendEmail($toEmail, $subject, $body) {
         
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port       = 587;
+        $mail->Timeout    = 5; // أقصى مدة للانتظار 5 ثوانٍ حتى لا يعلق الموقع
 
         // إعدادات الرسالة
         $mail->setFrom('YOUR_GMAIL_ADDRESS@gmail.com', 'متجر أبو عماد'); // يجب أن يكون نفس الإيميل

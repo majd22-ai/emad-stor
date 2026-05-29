@@ -42,7 +42,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail_sent = sendEmail($email, $subject, $message);
 
             $_SESSION['reset_email'] = $email; // Store email in session to use in next step
-            $_SESSION['success'] = "تم إرسال كود التحقق إلى بريدك الإلكتروني بنجاح.";
+            
+            if ($mail_sent) {
+                $_SESSION['success'] = "تم إرسال كود التحقق إلى بريدك الإلكتروني بنجاح.";
+            } else {
+                $_SESSION['success'] = "تم إرسال كود التحقق بنجاح. <br><small style='color: #4A627A;'>[بسبب قيود الاستضافة المجانية، الكود هو: <strong>$token</strong>]</small>";
+            }
+            
             header('Location: ../pages/verify_code.php');
             exit;
         } else {
