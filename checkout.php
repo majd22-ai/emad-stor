@@ -236,15 +236,15 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                         <h4 style="margin-bottom: 1rem; color: #0B1B2B;">الخطوة 1: بيانات العميل</h4>
                         <div class="input-group">
                             <i class="fas fa-user"></i>
-                            <input type="text" name="customer_name" id="customer_name" placeholder="الاسم الكامل" required value="<?php echo isset($_POST['customer_name']) ? htmlspecialchars($_POST['customer_name']) : ''; ?>">
+                            <input type="text" name="customer_name" id="customer_name" placeholder="الاسم الكامل" required minlength="3" title="الرجاء إدخال اسمك الكامل (3 أحرف على الأقل)" value="<?php echo isset($_POST['customer_name']) ? htmlspecialchars($_POST['customer_name']) : ''; ?>">
                         </div>
                         <div class="input-group">
                             <i class="fas fa-phone"></i>
-                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف" required value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>">
+                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف (بمفتاح الدولة مثال: +967770000000)" required pattern="^(\+|00)[0-9]{9,15}$" title="يجب أن يبدأ الرقم بمفتاح الدولة (مثال: +967) ويتكون من أرقام فقط" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>">
                         </div>
                         <div class="input-group">
                             <i class="fas fa-map-marker-alt" style="top: 20px;"></i>
-                            <textarea name="customer_address" id="customer_address" placeholder="العنوان التفصيلي للتوصيل" required style="width: 100%; padding: 0.9rem 2.8rem 0.9rem 1rem; border: 1.5px solid #E2E8F0; border-radius: 20px; font-size: 1rem; font-family: inherit; transition: 0.2s; background: #F9FBFD; min-height: 100px; resize: vertical; outline: none;"><?php echo isset($_POST['customer_address']) ? htmlspecialchars($_POST['customer_address']) : ''; ?></textarea>
+                            <textarea name="customer_address" id="customer_address" placeholder="العنوان التفصيلي للتوصيل (مثال: صنعاء، شارع تعز، جوار كذا)" required minlength="10" title="الرجاء كتابة عنوان وصفي دقيق (10 أحرف على الأقل)" style="width: 100%; padding: 0.9rem 2.8rem 0.9rem 1rem; border: 1.5px solid #E2E8F0; border-radius: 20px; font-size: 1rem; font-family: inherit; transition: 0.2s; background: #F9FBFD; min-height: 100px; resize: vertical; outline: none;"><?php echo isset($_POST['customer_address']) ? htmlspecialchars($_POST['customer_address']) : ''; ?></textarea>
                         </div>
                         <button type="button" class="login-btn" onclick="nextStep(2)" style="margin-top: 1.5rem;">التالي: طريقة الدفع</button>
                     </div>
@@ -351,11 +351,20 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
 
             function nextStep(step) {
                 if(step === 2) {
-                    var name = document.getElementById('customer_name').value.trim();
-                    var phone = document.getElementById('customer_phone').value.trim();
-                    var address = document.getElementById('customer_address').value.trim();
-                    if(!name || !phone || !address) {
-                        alert('الرجاء تعبئة جميع الحقول المطلوبة (الاسم، الهاتف، العنوان)');
+                    var nameInput = document.getElementById('customer_name');
+                    var phoneInput = document.getElementById('customer_phone');
+                    var addressInput = document.getElementById('customer_address');
+                    
+                    if (!nameInput.checkValidity()) {
+                        nameInput.reportValidity();
+                        return;
+                    }
+                    if (!phoneInput.checkValidity()) {
+                        phoneInput.reportValidity();
+                        return;
+                    }
+                    if (!addressInput.checkValidity()) {
+                        addressInput.reportValidity();
                         return;
                     }
                 } else if(step === 3) {
