@@ -31,15 +31,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare('INSERT INTO password_resets (email, token, expires_at) VALUES (?, ?, ?)');
         if ($stmt->execute([$email, $token, $expires_at])) {
             
+            // استدعاء ملف الإعدادات
+            require_once '../includes/mail_config.php';
+
             // Prepare Email
             $subject = 'كود استعادة كلمة المرور - متجر أبو عماد';
             $message = "مرحباً،\n\nلقد طلبت استعادة كلمة المرور الخاصة بحسابك.\nكود التحقق الخاص بك هو: $token\n\nهذا الكود صالح لمدة 15 دقيقة فقط.\nإذا لم تطلب هذا، يرجى تجاهل هذه الرسالة.";
-            $headers = 'From: noreply@emad-stor.com' . "\r\n" .
-                       'Reply-To: noreply@emad-stor.com' . "\r\n" .
-                       'X-Mailer: PHP/' . phpversion();
 
-            // Attempt to send email
-            $mail_sent = @mail($email, $subject, $message, $headers);
+            // Attempt to send email using PHPMailer
+            $mail_sent = sendEmail($email, $subject, $message);
 
             $_SESSION['reset_email'] = $email; // Store email in session to use in next step
             $_SESSION['success'] = "تم إرسال كود التحقق إلى بريدك الإلكتروني بنجاح.";
