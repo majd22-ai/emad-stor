@@ -2,8 +2,10 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// تأكد من استدعاء مكتبة PHPMailer (سيعمل هذا فقط بعد تثبيت المكتبة عبر Composer)
-require_once __DIR__ . '/../vendor/autoload.php';
+// تحميل ملفات المكتبة يدوياً لتفادي مشاكل الاستضافة
+require_once __DIR__ . '/PHPMailer/Exception.php';
+require_once __DIR__ . '/PHPMailer/PHPMailer.php';
+require_once __DIR__ . '/PHPMailer/SMTP.php';
 
 function sendEmail($toEmail, $subject, $body) {
     $mail = new PHPMailer(true);
