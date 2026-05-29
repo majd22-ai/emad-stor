@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $category_id = (int)$_POST['category_id'];
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
+    $sizes = trim($_POST['sizes'] ?? '');
     $price = (float)$_POST['price'];
     
     // معالجة رفع الصورة وتحويلها إلى Base64
@@ -41,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     if (!isset($_SESSION['error']) && !empty($title) && $price > 0 && $category_id > 0) {
         try {
-            $stmt = $pdo->prepare("INSERT INTO products (category_id, title, description, price, image_url) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$category_id, $title, $description, $price, $image_url]);
+            $stmt = $pdo->prepare("INSERT INTO products (category_id, title, description, price, image_url, sizes) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$category_id, $title, $description, $price, $image_url, $sizes]);
             $_SESSION['success'] = "تم إضافة المنتج بنجاح.";
         } catch (PDOException $e) {
             $_SESSION['error'] = "حدث خطأ أثناء الإضافة: " . $e->getMessage();
@@ -161,6 +162,10 @@ $products = $pdo->query("
             <div class="form-group">
                 <label>السعر ($):</label>
                 <input type="number" step="0.01" name="price" required>
+            </div>
+            <div class="form-group">
+                <label>المقاسات المتوفرة (اختياري):</label>
+                <input type="text" name="sizes" placeholder="مثال: S, M, L أو 44, 45, 46 (اتركه فارغاً إذا لم يوجد)">
             </div>
             <div class="form-group">
                 <label>الوصف (اختياري):</label>

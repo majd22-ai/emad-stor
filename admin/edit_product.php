@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $category_id = (int)$_POST['category_id'];
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
+    $sizes = trim($_POST['sizes'] ?? '');
     $price = (float)$_POST['price'];
     
     // معالجة رفع الصورة إن وجدت وتحويلها إلى Base64
@@ -56,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     if (!isset($error) && !empty($title) && $price > 0 && $category_id > 0) {
         try {
-            $updateStmt = $pdo->prepare("UPDATE products SET category_id = ?, title = ?, description = ?, price = ?, image_url = ? WHERE id = ?");
-            $updateStmt->execute([$category_id, $title, $description, $price, $image_url, $id]);
+            $updateStmt = $pdo->prepare("UPDATE products SET category_id = ?, title = ?, description = ?, price = ?, image_url = ?, sizes = ? WHERE id = ?");
+            $updateStmt->execute([$category_id, $title, $description, $price, $image_url, $sizes, $id]);
             $_SESSION['success'] = "تم تعديل المنتج بنجاح.";
             redirect('products.php');
         } catch (PDOException $e) {
@@ -135,6 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             <div class="form-group">
                 <label>السعر ($):</label>
                 <input type="number" step="0.01" name="price" value="<?php echo htmlspecialchars($product['price']); ?>" required>
+            </div>
+            <div class="form-group">
+                <label>المقاسات المتوفرة (اختياري):</label>
+                <input type="text" name="sizes" value="<?php echo isset($product['sizes']) ? htmlspecialchars($product['sizes']) : ''; ?>" placeholder="مثال: S, M, L أو 44, 45, 46 (اتركه فارغاً إذا لم يوجد)">
             </div>
             <div class="form-group">
                 <label>الوصف (اختياري):</label>
