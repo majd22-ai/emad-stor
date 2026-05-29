@@ -51,7 +51,7 @@ function addToCart(productElement) {
     const sizeSelect = productElement.querySelector('.ring-size-select');
     const selectedSize = sizeSelect ? sizeSelect.value : '';
     
-    if (!selectedSize) {
+    if (sizeSelect && !selectedSize) {
         showNotification('الرجاء اختيار المقاس أولاً', 'error');
         return;
     }

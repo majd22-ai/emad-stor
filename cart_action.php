@@ -32,7 +32,7 @@ if ($action === 'add') {
     $img = isset($input['img']) ? $input['img'] : '';
     $size = isset($input['size']) ? $input['size'] : '';
 
-    if ($id <= 0 || empty($name) || empty($size)) {
+    if ($id <= 0 || empty($name)) {
         echo json_encode(['status' => 'error', 'message' => 'Missing product details']);
         exit;
     }

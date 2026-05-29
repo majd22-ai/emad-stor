@@ -8,7 +8,7 @@ $searchTerm = '%' . $q . '%';
 $products = [];
 
 if (!empty($q)) {
-    $stmt_prod = $pdo->prepare("SELECT * FROM products WHERE title LIKE ? OR description LIKE ? ORDER BY id DESC");
+    $stmt_prod = $pdo->prepare("SELECT p.*, c.name as category_name, c.slug as category_slug FROM products p JOIN categories c ON p.category_id = c.id WHERE p.title LIKE ? OR p.description LIKE ? ORDER BY p.id DESC");
     $stmt_prod->execute([$searchTerm, $searchTerm]);
     $products = $stmt_prod->fetchAll();
 }
@@ -50,20 +50,27 @@ include 'includes/header.php';
                 <span class="price"><?php echo format_price($prod['price']); ?></span>
                 <button class="info-btn">ⓘ</button>
             </div>
+            <?php if (!empty($prod['sizes'])): ?>
             <div class="size-selection">
+                <?php if (strpos($prod['category_name'], 'خواتم') !== false || $prod['category_slug'] === 'me-rings' || $prod['category_slug'] === 'wo-rings'): ?>
                 <div class="size-help"><a href="#" class="size-guide-link">❓ كيف تعرف مقاسك؟</a></div>
+                <?php endif; ?>
                 <select class="ring-size-select">
                     <option value="">اختر المقاس</option>
-                    <option value="44-46 (≈19ملم)">مقاس 44-46 (≈19 ملم)</option>
-                    <option value="47-49 (≈20ملم)">مقاس 47-49 (≈20 ملم)</option>
-                    <option value="50-52 (≈21ملم)">مقاس 50-52 (≈21 ملم)</option>
-                    <option value="53-55 (≈22ملم)">مقاس 53-55 (≈22 ملم)</option>
-                    <option value="56-58 (≈23ملم)">مقاس 56-58 (≈23 ملم)</option>
-                    <option value="59-61 (≈24ملم)">مقاس 59-61 (≈24 ملم)</option>
-                    <option value="62-64 (≈25ملم)">مقاس 62-64 (≈25 ملم)</option>
-                    <option value="65-67 (≈26ملم)">مقاس 65-67 (≈26 ملم)</option>
+                    <?php 
+                    $sizes_array = explode(',', $prod['sizes']);
+                    foreach ($sizes_array as $sz):
+                        $sz = trim($sz);
+                        if (!empty($sz)):
+                    ?>
+                    <option value="<?php echo htmlspecialchars($sz); ?>"><?php echo htmlspecialchars($sz); ?></option>
+                    <?php 
+                        endif;
+                    endforeach; 
+                    ?>
                 </select>
             </div>
+            <?php endif; ?>
             <button class="add-cart">➕ أضف إلى السلة</button>
             <?php if (is_admin()): ?>
                 <div style="margin-top:10px; text-align:center;">
