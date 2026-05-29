@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } catch (Exception $e) {
         $pdo->rollBack();
-        $_SESSION['error'] = 'حدث خطأ أثناء تغيير كلمة المرور، يرجى المحاولة لاحقاً.';
+        $_SESSION['error'] = 'حدث خطأ أثناء تغيير كلمة المرور، يرجى المحاولة لاحقاً. ' . $e->getMessage();
         header('Location: ../pages/reset_password.php');
         exit;
     }
