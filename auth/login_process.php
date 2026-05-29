@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password_hash'])) {
+    if ($user && password_verify($password, $user['password_hash'] ?? '')) {
         // تسجيل الدخول بنجاح (منع Session Fixation)
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
