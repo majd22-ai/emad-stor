@@ -31,11 +31,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Insert new user
+    // Generate verification token
+    $verification_token = bin2hex(random_bytes(32));
+
+    // Insert new user (is_verified defaults to FALSE)
     $hash = password_hash($password, PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?)');
-    if ($stmt->execute([$name, $email, $hash])) {
-        $_SESSION['success'] = 'تم إنشاء الحساب بنجاح، يمكنك تسجيل الدخول الآن.';
+    $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password_hash, verification_token, is_verified) VALUES (?, ?, ?, ?, FALSE)');
+    if ($stmt->execute([$name, $email, $hash, $verification_token])) {
+        // Send Verification Email
+        require_once '../includes/mail_config.php';
+        $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
+        $base_url .= (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false || strpos($_SERVER['HTTP_HOST'], '127.0.0.1') !== false) ? '/emad-stor' : '';
+        
+        $verify_link = $base_url . "/auth/verify.php?email=" . urlencode($email) . "&token=" . $verification_token;
+        
+        $subject = 'تفعيل حسابك - متجر أبو عماد';
+        $message = "مرحباً $name،\n\nشكراً لتسجيلك في متجرنا!\nالرجاء الضغط على الرابط التالي لتفعيل حسابك:\n\n$verify_link\n\nإذا لم تقم بالتسجيل، يرجى تجاهل هذه الرسالة.";
+        
+        $mail_sent = sendEmail($email, $subject, $message);
+        
+        if ($mail_sent) {
+            $_SESSION['success'] = 'تم إنشاء الحساب بنجاح. لقد أرسلنا رابط التفعيل إلى بريدك الإلكتروني، يرجى تفعيل حسابك لتتمكن من تسجيل الدخول.';
+        } else {
+            // Fallback for local testing if mail fails
+            $_SESSION['success'] = "تم إنشاء الحساب بنجاح. <br><small style='color: #4A627A;'>[رابط التفعيل (للتجربة): <a href='$verify_link'>اضغط هنا</a>]</small>";
+        }
+        
         header('Location: ../pages/login.php');
         exit;
     } else {

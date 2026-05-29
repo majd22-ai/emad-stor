@@ -30,7 +30,7 @@ try {
         $_SESSION['is_logged_in'] = true;
     } else {
         // إنشاء حساب جديد
-        $stmt = $pdo->prepare("INSERT INTO users (full_name, email, oauth_provider, oauth_uid, role) VALUES (?, ?, 'firebase', ?, 'customer') RETURNING id");
+        $stmt = $pdo->prepare("INSERT INTO users (full_name, email, oauth_provider, oauth_uid, role, is_verified) VALUES (?, ?, 'firebase', ?, 'customer', TRUE) RETURNING id");
         $stmt->execute([$name, $email, $uid]);
         $new_id = $stmt->fetchColumn();
 

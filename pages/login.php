@@ -56,6 +56,19 @@ include '../includes/header.php';
             }
             ?>
 
+            <div class="social-login">
+                <button type="button" class="social-btn google" id="btn-google-login">
+                    <i class="fab fa-google"></i> Google
+                </button>
+                <button type="button" class="social-btn facebook" id="btn-facebook-login">
+                    <i class="fab fa-facebook-f"></i> Facebook
+                </button>
+            </div>
+
+            <div class="social-divider">
+                <span>أو باستخدام البريد</span>
+            </div>
+
             <form action="../auth/login_process.php" method="POST" class="login-form">
                 <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
                 <div class="input-group">
@@ -79,18 +92,6 @@ include '../includes/header.php';
                 </div>
             </form>
 
-            <div class="social-divider">
-                <span>أو عبر</span>
-            </div>
-
-            <div class="social-login">
-                <button type="button" class="social-btn google" id="btn-google-login">
-                    <i class="fab fa-google"></i> Google
-                </button>
-                <button type="button" class="social-btn facebook" id="btn-facebook-login">
-                    <i class="fab fa-facebook-f"></i> Facebook
-                </button>
-            </div>
         </div>
     </div>
 </main>

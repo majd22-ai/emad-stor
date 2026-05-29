@@ -22,11 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // البحث عن المستخدم
-    $stmt = $pdo->prepare('SELECT id, full_name, password_hash, role FROM users WHERE email = ?');
+    $stmt = $pdo->prepare('SELECT id, full_name, password_hash, role, is_verified FROM users WHERE email = ?');
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password_hash'] ?? '')) {
+        if (isset($user['is_verified']) && !$user['is_verified']) {
+            $_SESSION['error'] = 'حسابك غير مفعل. الرجاء مراجعة بريدك الإلكتروني لتفعيل الحساب. <br><a href="../auth/resend_verification.php?email=' . urlencode($email) . '" style="color:#1E3A5F; font-weight:bold; text-decoration:underline; margin-top:5px; display:inline-block;">إعادة إرسال رابط التفعيل</a>';
+            header('Location: ../pages/login.php');
+            exit;
+        }
         // تسجيل الدخول بنجاح (منع Session Fixation)
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
