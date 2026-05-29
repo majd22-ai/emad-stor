@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $verify_link = $base_url . "/auth/verify.php?email=" . urlencode($email) . "&token=" . $verification_token;
         
         $subject = 'تفعيل حسابك - متجر أبو عماد';
-        $message = "مرحباً $name،\n\nشكراً لتسجيلك في متجرنا!\nالرجاء الضغط على الرابط التالي لتفعيل حسابك:\n\n$verify_link\n\nإذا لم تقم بالتسجيل، يرجى تجاهل هذه الرسالة.";
+        $message = "مرحباً {$name}،\n\nشكراً لتسجيلك في متجرنا!\nالرجاء الضغط على الرابط التالي لتفعيل حسابك:\n\n$verify_link\n\nإذا لم تقم بالتسجيل، يرجى تجاهل هذه الرسالة.";
         
         $mail_sent = sendEmail($email, $subject, $message);
         
