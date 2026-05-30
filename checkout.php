@@ -151,7 +151,12 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
 ?>
 
 <!-- خريطة Leaflet تم إزالتها بناءً على طلب النظام الجديد -->
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+<style>
+    /* تصحيح اتجاه حقل الهاتف ومربع الأعلام ليناسب الصفحة العربية */
+    .iti { width: 100%; direction: ltr; }
+    .iti__country-list { text-align: left; direction: ltr; }
+</style>
 <div class="checkout-container">
     <?php if ($success): ?>
         <div class="success-message" style="text-align: center; padding: 3rem 1rem;">
@@ -239,8 +244,8 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                             <input type="text" name="customer_name" id="customer_name" placeholder="الاسم الكامل" required minlength="3" title="الرجاء إدخال اسمك الكامل (3 أحرف على الأقل)" value="<?php echo isset($_POST['customer_name']) ? htmlspecialchars($_POST['customer_name']) : ''; ?>">
                         </div>
                         <div class="input-group">
-                            <i class="fas fa-phone"></i>
-                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف (بمفتاح الدولة مثال: +967770000000)" required pattern="^(\+|00)[0-9]{9,15}$" title="يجب أن يبدأ الرقم بمفتاح الدولة (مثال: +967) ويتكون من أرقام فقط" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>">
+                            <i class="fas fa-phone" style="z-index: 10;"></i>
+                            <input type="tel" name="customer_phone" id="customer_phone" required title="يجب إدخال رقم هاتف صحيح" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>" style="padding-left: 50px;">
                         </div>
                         <div class="input-group">
                             <i class="fas fa-map-marker-alt" style="top: 20px;"></i>
@@ -325,8 +330,23 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
 
                 </form>
             </div>
-            
-            <script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const phoneInputField = document.querySelector("#customer_phone");
+                window.phoneInputITI = window.intlTelInput(phoneInputField, {
+                    preferredCountries: ["ye", "sa", "ae", "eg"],
+                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                    separateDialCode: true,
+                    initialCountry: "auto",
+                    geoIpLookup: function(success, failure) {
+                        fetch("https://ipapi.co/json")
+                            .then(function(res) { return res.json(); })
+                            .then(function(data) { success(data.country_code); })
+                            .catch(function() { success("ye"); });
+                    }
+                });
+            });
             function handleFileSelect(inputElement) {
                 if (inputElement.files && inputElement.files.length > 0) {
                     var camInput = document.getElementById('camera_receipt');
@@ -362,6 +382,13 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                     if (!phoneInput.checkValidity()) {
                         phoneInput.reportValidity();
                         return;
+                    }
+                    if (window.phoneInputITI && !window.phoneInputITI.isValidNumber()) {
+                        alert("رقم الهاتف غير صحيح أو لا يطابق الدولة المختارة. يرجى التأكد من اختيار رمز الدولة وإدخال الرقم بشكل صحيح.");
+                        return;
+                    }
+                    if (window.phoneInputITI) {
+                        phoneInput.value = window.phoneInputITI.getNumber();
                     }
                     if (!addressInput.checkValidity()) {
                         addressInput.reportValidity();
