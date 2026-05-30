@@ -246,7 +246,7 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                             <input type="text" name="customer_name" id="customer_name" placeholder="الاسم الكامل" required minlength="3" title="الرجاء إدخال اسمك الكامل (3 أحرف على الأقل)" value="<?php echo isset($_POST['customer_name']) ? htmlspecialchars($_POST['customer_name']) : ''; ?>">
                         </div>
                         <div class="input-group phone-group" style="direction: ltr;">
-                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف" required title="يجب إدخال رقم هاتف صحيح" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>" style="width: 100%; padding-top: 0.9rem; padding-bottom: 0.9rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; background: #F9FBFD; outline: none; text-align: left;">
+                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف" required minlength="9" maxlength="15" title="الرقم اليمني يتكون من 9 أرقام، ويجب إدخال رقم صحيح حسب الدولة" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>" style="width: 100%; padding-top: 0.9rem; padding-bottom: 0.9rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; background: #F9FBFD; outline: none; text-align: left;">
                         </div>
                         <div class="input-group">
                             <i class="fas fa-map-marker-alt" style="top: 20px;"></i>
@@ -404,6 +404,25 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                     
                     if (!addressInput.checkValidity()) {
                         addressInput.reportValidity();
+                        return;
+                    }
+                    var addressVal = addressInput.value.trim();
+                    var words = addressVal.split(/\s+/).filter(function(w){ return w.length > 0; });
+                    if (words.length < 4) {
+                        alert("وصف العنوان غير مكتمل أو غير دقيق. يرجى كتابة عنوان تفصيلي يتكون من 4 كلمات على الأقل (مثال: مدينة صنعاء شارع حدة جوار...).");
+                        return;
+                    }
+                    
+                    // منع إدخال الحروف المكررة بشكل غير منطقي (مثل: اااا أو gggg)
+                    if (/(.)\1{4,}/.test(addressVal)) {
+                        alert("عذراً، وصف العنوان غير صحيح. يرجى كتابة عنوان حقيقي ومفهوم.");
+                        return;
+                    }
+                    
+                    // فحص إذا كانت الكلمات قصيرة جداً (أقل من حرفين) لمعظم الكلمات
+                    var shortWords = words.filter(function(w){ return w.length < 2; }).length;
+                    if (shortWords > (words.length / 2)) {
+                        alert("وصف العنوان غير صحيح أو غير مفهوم. يرجى كتابة عنوان دقيق للتوصيل.");
                         return;
                     }
                 } else if(step === 3) {
