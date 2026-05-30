@@ -156,6 +156,8 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
     /* تصحيح اتجاه حقل الهاتف ومربع الأعلام ليناسب الصفحة العربية */
     .iti { width: 100%; direction: ltr; }
     .iti__country-list { text-align: left; direction: ltr; }
+    .iti__flag-container { border-radius: 50px 0 0 50px; overflow: hidden; }
+    .input-group.phone-group input { padding-left: 55px !important; }
 </style>
 <div class="checkout-container">
     <?php if ($success): ?>
@@ -243,9 +245,8 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                             <i class="fas fa-user"></i>
                             <input type="text" name="customer_name" id="customer_name" placeholder="الاسم الكامل" required minlength="3" title="الرجاء إدخال اسمك الكامل (3 أحرف على الأقل)" value="<?php echo isset($_POST['customer_name']) ? htmlspecialchars($_POST['customer_name']) : ''; ?>">
                         </div>
-                        <div class="input-group">
-                            <i class="fas fa-phone" style="z-index: 10;"></i>
-                            <input type="tel" name="customer_phone" id="customer_phone" required title="يجب إدخال رقم هاتف صحيح" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>" style="padding-left: 50px;">
+                        <div class="input-group phone-group" style="direction: ltr;">
+                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف" required title="يجب إدخال رقم هاتف صحيح" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>" style="width: 100%; padding-top: 0.9rem; padding-bottom: 0.9rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; background: #F9FBFD; outline: none; text-align: left;">
                         </div>
                         <div class="input-group">
                             <i class="fas fa-map-marker-alt" style="top: 20px;"></i>
