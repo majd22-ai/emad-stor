@@ -333,21 +333,24 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
             </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة حقل الهاتف الدولي بدون انتظار DOMContentLoaded لأنه في أسفل الصفحة
+            (function() {
                 const phoneInputField = document.querySelector("#customer_phone");
-                window.phoneInputITI = window.intlTelInput(phoneInputField, {
-                    preferredCountries: ["ye", "sa", "ae", "eg"],
-                    utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-                    separateDialCode: true,
-                    initialCountry: "auto",
-                    geoIpLookup: function(success, failure) {
-                        fetch("https://ipapi.co/json")
-                            .then(function(res) { return res.json(); })
-                            .then(function(data) { success(data.country_code); })
-                            .catch(function() { success("ye"); });
-                    }
-                });
-            });
+                if (typeof window.intlTelInput === 'function') {
+                    window.phoneInputITI = window.intlTelInput(phoneInputField, {
+                        preferredCountries: ["ye", "sa", "ae", "eg"],
+                        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+                        separateDialCode: true,
+                        initialCountry: "auto",
+                        geoIpLookup: function(success, failure) {
+                            fetch("https://ipapi.co/json")
+                                .then(function(res) { return res.json(); })
+                                .then(function(data) { success(data.country_code); })
+                                .catch(function() { success("ye"); });
+                        }
+                    });
+                }
+            })();
             function handleFileSelect(inputElement) {
                 if (inputElement.files && inputElement.files.length > 0) {
                     var camInput = document.getElementById('camera_receipt');
@@ -384,13 +387,21 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                         phoneInput.reportValidity();
                         return;
                     }
-                    if (window.phoneInputITI && !window.phoneInputITI.isValidNumber()) {
-                        alert("رقم الهاتف غير صحيح أو لا يطابق الدولة المختارة. يرجى التأكد من اختيار رمز الدولة وإدخال الرقم بشكل صحيح.");
-                        return;
-                    }
                     if (window.phoneInputITI) {
+                        if (!window.phoneInputITI.isValidNumber()) {
+                            alert("رقم الهاتف غير صحيح أو لا يطابق الدولة المختارة. يرجى التأكد من اختيار رمز الدولة وإدخال الرقم بشكل صحيح.");
+                            return;
+                        }
                         phoneInput.value = window.phoneInputITI.getNumber();
+                    } else {
+                        // Fallback validation if plugin failed to load
+                        var phoneVal = phoneInput.value.trim();
+                        if(!/^(\+|00)?[0-9]{9,15}$/.test(phoneVal)) {
+                            alert("الرجاء إدخال رقم هاتف صحيح (9 إلى 15 رقماً).");
+                            return;
+                        }
                     }
+                    
                     if (!addressInput.checkValidity()) {
                         addressInput.reportValidity();
                         return;
