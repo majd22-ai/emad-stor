@@ -227,57 +227,62 @@ foreach ($items as $item) {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التجهيز...';
         btn.disabled = true;
 
-        try {
-            // Hide action buttons during screenshot just in case
-            const canvas = await html2canvas(document.querySelector('.invoice-box'), { scale: 2, useCORS: true });
-            
-            canvas.toBlob(async function(blob) {
-                const file = new File([blob], 'invoice_<?php echo $order_id; ?>.png', { type: 'image/png' });
-                
-                <?php 
-                    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-                    $public_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/invoice.php?id=" . $order_id . "&p=" . str_replace('+', '', $order['customer_phone']);
-                ?>
-                const publicUrl = '<?php echo $public_url; ?>';
-                const shareText = 'مرحباً،\nيمكنك عرض وطباعة الفاتورة الخاصة بك عبر هذا الرابط المباشر:\n' + publicUrl;
-                
-                const shareData = {
-                    title: 'فاتورة من متجر أبو عماد',
-                    text: 'يمكنك عرض وطباعة الفاتورة عبر هذا الرابط:',
-                    url: publicUrl,
-                    files: [file]
-                };
+        <?php 
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $public_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/invoice.php?id=" . $order_id . "&p=" . str_replace('+', '', $order['customer_phone']);
+        ?>
+        const publicUrl = '<?php echo $public_url; ?>';
+        const shareText = 'مرحباً،\nيمكنك عرض وطباعة الفاتورة الخاصة بك عبر هذا الرابط المباشر:\n' + publicUrl;
 
-                if (navigator.share) {
-                    try {
-                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                            await navigator.share(shareData);
-                        } else {
-                            await navigator.share({
-                                title: shareData.title,
-                                text: shareData.text,
-                                url: shareData.url
-                            });
-                        }
-                    } catch (e) {
-                        if (e.name !== 'AbortError') {
-                            // Fallback to WhatsApp if share fails
-                            window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
-                        }
-                    }
+        const fallbackToWhatsApp = () => {
+            window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
+        };
+
+        try {
+            if (typeof html2canvas === 'undefined') {
+                throw new Error('html2canvas library is not loaded.');
+            }
+
+            // Hide action buttons during screenshot just in case
+            document.querySelector('.action-buttons').style.display = 'none';
+            const canvas = await html2canvas(document.querySelector('.invoice-box'), { scale: 2, useCORS: true, logging: false });
+            document.querySelector('.action-buttons').style.display = 'block';
+            
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+            if (!blob) throw new Error('Failed to create image blob.');
+
+            const file = new File([blob], 'invoice_<?php echo $order_id; ?>.png', { type: 'image/png' });
+            
+            const shareData = {
+                title: 'فاتورة من متجر أبو عماد',
+                text: 'يمكنك عرض الفاتورة وطباعتها عبر هذا الرابط:',
+                url: publicUrl,
+                files: [file]
+            };
+
+            if (navigator.share) {
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share(shareData);
                 } else {
-                    // Fallback to WhatsApp if navigator.share is not supported
-                    window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
+                    await navigator.share({
+                        title: shareData.title,
+                        text: shareData.text,
+                        url: shareData.url
+                    });
                 }
-            });
+            } else {
+                fallbackToWhatsApp();
+            }
         } catch (err) {
-            console.error('Error preparing image:', err);
-            alert('حدث خطأ أثناء محاولة التجهيز.');
+            console.error('Share or Canvas Error:', err);
+            document.querySelector('.action-buttons').style.display = 'block'; // ensure buttons are visible
+            // Fallback automatically if the error is not user-aborted
+            if (err.name !== 'AbortError') {
+                fallbackToWhatsApp();
+            }
         } finally {
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 1000);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
     }
     </script>
