@@ -226,7 +226,7 @@ foreach ($orders as $o) {
                                         $delivery_fee_display = format_price($order['delivery_fee'] ?? 0);
                                         $whatsapp_text .= "رسوم التوصيل: {$delivery_fee_display}\n";
                                         $whatsapp_text .= "الإجمالي: {$total_price_for_msg}\n";
-                                        $whatsapp_text .= "الموقع: {$osm_url}";
+                                        $whatsapp_text .= "العنوان: {$order['customer_address']}";
                                         
                                         $whatsapp_url = "https://wa.me/?text=" . urlencode($whatsapp_text);
                                         ?>
