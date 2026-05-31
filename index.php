@@ -43,52 +43,54 @@ $products = $stmt->fetchAll();
                 <span class="price"><?php echo format_price($prod['price']); ?></span>
                 <button type="button" class="info-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;" title="التفاصيل">ⓘ</button>
             </div>
-            <?php 
-            $is_ring = (strpos($prod['category_name'], 'خواتم') !== false);
-            if ($is_ring || !empty($prod['sizes'])): 
-            ?>
-            <div class="size-selection">
-                <?php if ($is_ring): ?>
-                <div class="size-help"><a href="#" class="size-guide-link" onclick="openSizeGuide(event)">❓ كيف تعرف مقاسك؟</a></div>
-                <?php endif; ?>
-                <select class="ring-size-select">
-                    <option value="">اختر المقاس</option>
-                    <?php 
-                    if ($is_ring) {
-                        $fixed_ring_sizes = [
-                            '44-46 (=19 ملم)',
-                            '47-49 (=20 ملم)',
-                            '50-52 (=21 ملم)',
-                            '53-55 (=22 ملم)',
-                            '56-58 (=23 ملم)',
-                            '59-61 (=24 ملم)',
-                            '62-64 (=25 ملم)',
-                            '65-67 (=26 ملم)'
-                        ];
-                        foreach ($fixed_ring_sizes as $sz) {
-                            echo '<option value="' . htmlspecialchars($sz) . '">' . htmlspecialchars($sz) . '</option>';
+            <div class="product-actions" style="margin-top: auto; width: 100%;">
+                <?php 
+                $is_ring = (strpos($prod['category_name'], 'خواتم') !== false);
+                if ($is_ring || !empty($prod['sizes'])): 
+                ?>
+                <div class="size-selection">
+                    <?php if ($is_ring): ?>
+                    <div class="size-help"><a href="#" class="size-guide-link" onclick="openSizeGuide(event)">❓ كيف تعرف مقاسك؟</a></div>
+                    <?php endif; ?>
+                    <select class="ring-size-select">
+                        <option value="">اختر المقاس</option>
+                        <?php 
+                        if ($is_ring) {
+                            $fixed_ring_sizes = [
+                                '44-46 (=19 ملم)',
+                                '47-49 (=20 ملم)',
+                                '50-52 (=21 ملم)',
+                                '53-55 (=22 ملم)',
+                                '56-58 (=23 ملم)',
+                                '59-61 (=24 ملم)',
+                                '62-64 (=25 ملم)',
+                                '65-67 (=26 ملم)'
+                            ];
+                            foreach ($fixed_ring_sizes as $sz) {
+                                echo '<option value="' . htmlspecialchars($sz) . '">' . htmlspecialchars($sz) . '</option>';
+                            }
+                        } else {
+                            $sizes_array = explode(',', $prod['sizes']);
+                            foreach ($sizes_array as $sz):
+                                $sz = trim($sz);
+                                if (!empty($sz)):
+                        ?>
+                        <option value="<?php echo htmlspecialchars($sz); ?>"><?php echo htmlspecialchars($sz); ?></option>
+                        <?php 
+                                endif;
+                            endforeach; 
                         }
-                    } else {
-                        $sizes_array = explode(',', $prod['sizes']);
-                        foreach ($sizes_array as $sz):
-                            $sz = trim($sz);
-                            if (!empty($sz)):
-                    ?>
-                    <option value="<?php echo htmlspecialchars($sz); ?>"><?php echo htmlspecialchars($sz); ?></option>
-                    <?php 
-                            endif;
-                        endforeach; 
-                    }
-                    ?>
-                </select>
-            </div>
-            <?php endif; ?>
-            <button class="add-cart">➕ أضف إلى السلة</button>
-            <?php if (is_admin()): ?>
-                <div style="margin-top:10px; text-align:center;">
-                    <a href="admin/products.php" style="color: blue; text-decoration: underline; font-size: 0.9em;">تعديل من الإدارة</a>
+                        ?>
+                    </select>
                 </div>
-            <?php endif; ?>
+                <?php endif; ?>
+                <button class="add-cart">➕ أضف إلى السلة</button>
+                <?php if (is_admin()): ?>
+                    <div style="margin-top:10px; margin-bottom:10px; text-align:center;">
+                        <a href="admin/products.php" style="color: blue; text-decoration: underline; font-size: 0.9em;">تعديل من الإدارة</a>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
         <?php endforeach; ?>
         
