@@ -271,7 +271,7 @@ $orders = $stmt->fetchAll();
                                         <button type="submit" class="btn" style="padding: 5px 10px;">تحديث</button>
                                     </form>
 
-                                    <?php if ($order['status'] == 'delivered'): 
+                                    <?php 
                                         $inv_wa_text = "مرحباً {$order['customer_name']} 🌷\n";
                                         $inv_wa_text .= "هذه فاتورة شراء لطلبك رقم #{$order['id']} من متجر أبو عماد للفضيات.\n\n";
                                         $inv_wa_text .= "🧾 تفاصيل الطلب:\n";
@@ -301,10 +301,10 @@ $orders = $stmt->fetchAll();
                                     ?>
                                     <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px;">
                                         <h5 style="margin-top: 0; margin-bottom: 10px; color: #333;"><i class="fas fa-file-invoice"></i> خيارات الفاتورة</h5>
-                                        <a href="view_invoice.php?id=<?php echo $order['id']; ?>&type=purchase" target="_blank" class="btn" style="background-color: #0B1B2B; color: white;"><i class="fas fa-print"></i> طباعة الفاتورة</a>
-                                        <a href="<?php echo htmlspecialchars($inv_wa_url); ?>" target="_blank" class="btn" style="background-color: #25D366; color: white;"><i class="fab fa-whatsapp"></i> إرسال الفاتورة (واتساب)</a>
+                                        <a href="view_invoice.php?id=<?php echo $order['id']; ?>&type=purchase" target="_blank" class="btn" style="background-color: #0B1B2B; color: white; margin-bottom: 5px;"><i class="fas fa-print"></i> طباعة الفاتورة للعميل</a>
+                                        <a href="view_invoice.php?id=<?php echo $order['id']; ?>&type=delivery" target="_blank" class="btn" style="background-color: #e67e22; color: white; margin-bottom: 5px;"><i class="fas fa-motorcycle"></i> طباعة فاتورة التوصيل للمندوب</a>
+                                        <a href="<?php echo htmlspecialchars($inv_wa_url); ?>" target="_blank" class="btn" style="background-color: #25D366; color: white; margin-bottom: 5px;"><i class="fab fa-whatsapp"></i> إرسال الفاتورة (واتساب)</a>
                                     </div>
-                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
