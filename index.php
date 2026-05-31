@@ -43,23 +43,42 @@ $products = $stmt->fetchAll();
                 <span class="price"><?php echo format_price($prod['price']); ?></span>
                 <button type="button" class="info-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;" title="التفاصيل">ⓘ</button>
             </div>
-            <?php if (!empty($prod['sizes'])): ?>
+            <?php 
+            $is_ring = (strpos($prod['category_name'], 'خواتم') !== false);
+            if ($is_ring || !empty($prod['sizes'])): 
+            ?>
             <div class="size-selection">
-                <?php if (strpos($prod['category_name'], 'خواتم') !== false): ?>
-                <div class="size-help"><a href="#" class="size-guide-link">❓ كيف تعرف مقاسك؟</a></div>
+                <?php if ($is_ring): ?>
+                <div class="size-help"><a href="#" class="size-guide-link" onclick="openSizeGuide(event)">❓ كيف تعرف مقاسك؟</a></div>
                 <?php endif; ?>
                 <select class="ring-size-select">
                     <option value="">اختر المقاس</option>
                     <?php 
-                    $sizes_array = explode(',', $prod['sizes']);
-                    foreach ($sizes_array as $sz):
-                        $sz = trim($sz);
-                        if (!empty($sz)):
+                    if ($is_ring) {
+                        $fixed_ring_sizes = [
+                            '44-46 (=19 ملم)',
+                            '47-49 (=20 ملم)',
+                            '50-52 (=21 ملم)',
+                            '53-55 (=22 ملم)',
+                            '56-58 (=23 ملم)',
+                            '59-61 (=24 ملم)',
+                            '62-64 (=25 ملم)',
+                            '65-67 (=26 ملم)'
+                        ];
+                        foreach ($fixed_ring_sizes as $sz) {
+                            echo '<option value="' . htmlspecialchars($sz) . '">' . htmlspecialchars($sz) . '</option>';
+                        }
+                    } else {
+                        $sizes_array = explode(',', $prod['sizes']);
+                        foreach ($sizes_array as $sz):
+                            $sz = trim($sz);
+                            if (!empty($sz)):
                     ?>
                     <option value="<?php echo htmlspecialchars($sz); ?>"><?php echo htmlspecialchars($sz); ?></option>
                     <?php 
-                        endif;
-                    endforeach; 
+                            endif;
+                        endforeach; 
+                    }
                     ?>
                 </select>
             </div>
@@ -163,5 +182,51 @@ $products = $stmt->fetchAll();
         </div>
     </div>
 </div>
+
+<div id="sizeGuideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; width: 90%; max-width: 500px; padding: 2rem; border-radius: 12px; position: relative; max-height: 90vh; overflow-y: auto;">
+        <button onclick="document.getElementById('sizeGuideModal').style.display='none'" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        <h3 style="text-align: center; color: #0B1B2B; margin-bottom: 1.5rem;">كيف تعرف مقاسك؟</h3>
+        <p style="margin-bottom: 1rem; color: #555;">لمعرفة مقاس الخاتم المناسب لك، اتبع الخطوات التالية:</p>
+        <ol style="margin-bottom: 1.5rem; padding-right: 1.5rem; color: #444; line-height: 1.6;">
+            <li>أحضر خيطاً أو شريطاً ورقياً ولفه حول إصبعك.</li>
+            <li>ضع علامة بالقلم عند نقطة التقاء الطرفين.</li>
+            <li>افرد الخيط وقم بقياس المسافة بالمسطرة (بالميليمتر).</li>
+            <li>قارن القياس بالجدول التالي لاختيار المقاس المناسب.</li>
+        </ol>
+        <table style="width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 1rem;">
+            <thead>
+                <tr style="background: #f8fafc;">
+                    <th style="border: 1px solid #ddd; padding: 8px;">محيط الإصبع (بالملم)</th>
+                    <th style="border: 1px solid #ddd; padding: 8px;">مقاس الخاتم</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">59 - 61 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">19 (أو 44-46)</td></tr>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">62 - 64 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">20 (أو 47-49)</td></tr>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">65 - 67 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">21 (أو 50-52)</td></tr>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">68 - 70 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">22 (أو 53-55)</td></tr>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">71 - 73 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">23 (أو 56-58)</td></tr>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">74 - 76 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">24 (أو 59-61)</td></tr>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">77 - 79 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">25 (أو 62-64)</td></tr>
+                <tr><td style="border: 1px solid #ddd; padding: 8px;">80 - 82 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">26 (أو 65-67)</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size: 0.85rem; color: #888; text-align: center;">ملاحظة: المقاسات المعروضة في المتجر تمثل القطر الداخلي أو الأرقام المتداولة محلياً.</p>
+    </div>
+</div>
+<script>
+function openSizeGuide(e) {
+    e.preventDefault();
+    var modal = document.getElementById('sizeGuideModal');
+    modal.style.display = 'flex';
+}
+window.addEventListener('click', function(e) {
+    var modal = document.getElementById('sizeGuideModal');
+    if (e.target == modal) {
+        modal.style.display = 'none';
+    }
+});
+</script>
 
 <?php include 'includes/footer.php'; ?>
