@@ -64,7 +64,6 @@ foreach ($items as $item) {
     <title><?php echo $invoice_title . ' - #' . $order_id; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { font-family: 'Playpen Sans Arabic', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
         .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); font-size: 16px; line-height: 24px; color: #555; background: #fff; border-radius: 8px; }
@@ -92,11 +91,9 @@ foreach ($items as $item) {
         .totals-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .totals-row.grand-total { font-weight: bold; font-size: 1.2em; color: #0B1B2B; border-top: 2px solid #ddd; padding-top: 10px; margin-top: 10px; }
         
-        .print-btn, .share-btn { display: inline-block; width: 180px; margin: 10px; padding: 12px; text-align: center; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; font-family: inherit; font-size: 16px; transition: 0.2s; }
+        .print-btn { display: inline-block; width: 180px; margin: 10px; padding: 12px; text-align: center; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; font-family: inherit; font-size: 16px; transition: 0.2s; }
         .print-btn { background: #0B1B2B; }
         .print-btn:hover { background: #1a365d; }
-        .share-btn { background: #25D366; }
-        .share-btn:hover { background: #1da851; }
         .action-buttons { text-align: center; margin-bottom: 20px; }
         
         @media only screen and (max-width: 600px) {
@@ -104,7 +101,7 @@ foreach ($items as $item) {
             .invoice-header { flex-direction: column; text-align: center; }
             .store-details { text-align: center; margin-top: 15px; }
             .totals-box { width: 100%; }
-            .print-btn, .share-btn { width: 90%; margin: 5px auto; display: block; }
+            .print-btn { width: 90%; margin: 5px auto; display: block; }
         }
         
         @media print {
@@ -117,7 +114,6 @@ foreach ($items as $item) {
 <body>
     <div class="action-buttons">
         <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> طباعة الفاتورة</button>
-        <button class="share-btn" onclick="shareInvoice()" id="shareBtn"><i class="fas fa-share-alt"></i> مشاركة الفاتورة</button>
     </div>
     
     <div class="invoice-box">
@@ -219,72 +215,5 @@ foreach ($items as $item) {
             <p>نأمل أن تحوز منتجاتنا على إعجابكم.</p>
         </div>
     </div>
-
-    <script>
-    async function shareInvoice() {
-        const btn = document.getElementById('shareBtn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التجهيز...';
-        btn.disabled = true;
-
-        <?php 
-            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-            $public_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/invoice.php?id=" . $order_id . "&p=" . str_replace('+', '', $order['customer_phone']);
-        ?>
-        const publicUrl = '<?php echo $public_url; ?>';
-        const shareText = 'مرحباً،\nيمكنك عرض وطباعة الفاتورة الخاصة بك عبر هذا الرابط المباشر:\n' + publicUrl;
-
-        const fallbackToWhatsApp = () => {
-            window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
-        };
-
-        try {
-            if (typeof html2canvas === 'undefined') {
-                throw new Error('html2canvas library is not loaded.');
-            }
-
-            // Hide action buttons during screenshot just in case
-            document.querySelector('.action-buttons').style.display = 'none';
-            const canvas = await html2canvas(document.querySelector('.invoice-box'), { scale: 2, useCORS: true, logging: false });
-            document.querySelector('.action-buttons').style.display = 'block';
-            
-            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-            if (!blob) throw new Error('Failed to create image blob.');
-
-            const file = new File([blob], 'invoice_<?php echo $order_id; ?>.png', { type: 'image/png' });
-            
-            const shareData = {
-                title: 'فاتورة من متجر أبو عماد',
-                text: 'يمكنك عرض الفاتورة وطباعتها عبر هذا الرابط:',
-                url: publicUrl,
-                files: [file]
-            };
-
-            if (navigator.share) {
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share(shareData);
-                } else {
-                    await navigator.share({
-                        title: shareData.title,
-                        text: shareData.text,
-                        url: shareData.url
-                    });
-                }
-            } else {
-                fallbackToWhatsApp();
-            }
-        } catch (err) {
-            console.error('Share or Canvas Error:', err);
-            document.querySelector('.action-buttons').style.display = 'block'; // ensure buttons are visible
-            // Fallback automatically if the error is not user-aborted
-            if (err.name !== 'AbortError') {
-                fallbackToWhatsApp();
-            }
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
-    </script>
 </body>
 </html>

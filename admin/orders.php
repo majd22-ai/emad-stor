@@ -293,7 +293,11 @@ $orders = $stmt->fetchAll();
                                             $inv_wa_text .= "🏷️ الخصم: -{$discount_display}\n";
                                         }
                                         $inv_wa_text .= "💰 الإجمالي النهائي: {$total_price_for_msg}\n\n";
-                                        $inv_wa_text .= "نأمل أن تنال منتجاتنا إعجابك! شكراً لتسوقك معنا.";
+                                        $inv_wa_text .= "نأمل أن تنال منتجاتنا إعجابك! شكراً لتسوقك معنا.\n\n";
+                                        
+                                        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                                        $public_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/invoice.php?id=" . $order['id'] . "&p=" . str_replace('+', '', $order['customer_phone']);
+                                        $inv_wa_text .= "لعرض وطباعة الفاتورة الخاصة بك كصفحة ويب، يرجى الضغط على الرابط التالي:\n" . $public_url;
                                         
                                         $cust_phone = $order['customer_phone'];
                                         if (strpos($cust_phone, '+') === 0) $cust_phone = substr($cust_phone, 1);
