@@ -9,6 +9,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <a href="products.php" class="<?php echo $current_page == 'products.php' ? 'active' : ''; ?>"><i class="fas fa-box"></i> إدارة المنتجات</a>
     <a href="orders.php" class="<?php echo $current_page == 'orders.php' ? 'active' : ''; ?>"><i class="fas fa-shopping-cart"></i> إدارة الطلبات</a>
     <a href="sales.php" class="<?php echo $current_page == 'sales.php' ? 'active' : ''; ?>"><i class="fas fa-chart-line"></i> المبيعات</a>
+    <a href="invoices.php" class="<?php echo $current_page == 'invoices.php' ? 'active' : ''; ?>"><i class="fas fa-file-invoice-dollar"></i> الفواتير</a>
     <a href="coupons.php" class="<?php echo $current_page == 'coupons.php' ? 'active' : ''; ?>"><i class="fas fa-tags"></i> إدارة الكوبونات</a>
     <a href="users.php" class="<?php echo $current_page == 'users.php' ? 'active' : ''; ?>"><i class="fas fa-users"></i> إدارة المستخدمين</a>
     <a href="../index.php"><i class="fas fa-store"></i> العودة للمتجر</a>

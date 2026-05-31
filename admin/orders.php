@@ -270,6 +270,41 @@ $orders = $stmt->fetchAll();
                                         </select>
                                         <button type="submit" class="btn" style="padding: 5px 10px;">تحديث</button>
                                     </form>
+
+                                    <?php if ($order['status'] == 'delivered'): 
+                                        $inv_wa_text = "مرحباً {$order['customer_name']} 🌷\n";
+                                        $inv_wa_text .= "هذه فاتورة شراء لطلبك رقم #{$order['id']} من متجر أبو عماد للفضيات.\n\n";
+                                        $inv_wa_text .= "🧾 تفاصيل الطلب:\n";
+                                        foreach ($orderItems as $item) {
+                                            $n = $item['title'] ? htmlspecialchars($item['title']) : 'منتج محذوف';
+                                            $qty = $item['quantity'];
+                                            $inv_wa_text .= "- {$n} (الكمية: {$qty})\n";
+                                        }
+                                        $inv_wa_text .= "\n🚚 رسوم التوصيل: {$delivery_fee_display}\n";
+                                        if (!empty($order['discount_amount']) && $order['discount_amount'] > 0) {
+                                            $discount_display = '';
+                                            if (!empty($order['currency']) && !empty($order['exchange_rate'])) {
+                                                $hist_disc = $order['discount_amount'] * $order['exchange_rate'];
+                                                $symbol = get_currency_symbol($order['currency']);
+                                                $discount_display = ($order['currency'] === 'YER') ? number_format($hist_disc, 0) . ' ' . $symbol : number_format($hist_disc, 2) . ' ' . $symbol;
+                                            } else {
+                                                $discount_display = format_price($order['discount_amount']);
+                                            }
+                                            $inv_wa_text .= "🏷️ الخصم: -{$discount_display}\n";
+                                        }
+                                        $inv_wa_text .= "💰 الإجمالي النهائي: {$total_price_for_msg}\n\n";
+                                        $inv_wa_text .= "نأمل أن تنال منتجاتنا إعجابك! شكراً لتسوقك معنا.";
+                                        
+                                        $cust_phone = $order['customer_phone'];
+                                        if (strpos($cust_phone, '+') === 0) $cust_phone = substr($cust_phone, 1);
+                                        $inv_wa_url = "https://wa.me/" . $cust_phone . "?text=" . urlencode($inv_wa_text);
+                                    ?>
+                                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px;">
+                                        <h5 style="margin-top: 0; margin-bottom: 10px; color: #333;"><i class="fas fa-file-invoice"></i> خيارات الفاتورة</h5>
+                                        <a href="view_invoice.php?id=<?php echo $order['id']; ?>&type=purchase" target="_blank" class="btn" style="background-color: #0B1B2B; color: white;"><i class="fas fa-print"></i> طباعة الفاتورة</a>
+                                        <a href="<?php echo htmlspecialchars($inv_wa_url); ?>" target="_blank" class="btn" style="background-color: #25D366; color: white;"><i class="fab fa-whatsapp"></i> إرسال الفاتورة (واتساب)</a>
+                                    </div>
+                                    <?php endif; ?>
                                 </div>
                             </td>
                         </tr>
