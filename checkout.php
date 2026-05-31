@@ -501,7 +501,12 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
             }
 
             function formatPriceJS(amount) {
-                return amount.toLocaleString('en-US') + ' <?php echo get_currency_symbol(get_current_currency()); ?>';
+                var currentCurrency = '<?php echo get_current_currency(); ?>';
+                if (currentCurrency === 'YER') {
+                    return Math.round(amount).toLocaleString('en-US') + ' <?php echo get_currency_symbol(get_current_currency()); ?>';
+                } else {
+                    return amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <?php echo get_currency_symbol(get_current_currency()); ?>';
+                }
             }
 
             function calculateShipping() {
