@@ -10,7 +10,12 @@ if (!isset($_GET['id']) || !isset($_GET['p'])) {
 
 $order_id = (int)$_GET['id'];
 $phone = $_GET['p'];
-$invoice_title = 'فاتورة شراء (Purchase Invoice)';
+$type = isset($_GET['type']) ? $_GET['type'] : 'purchase';
+if ($type === 'delivery') {
+    $invoice_title = 'فاتورة توصيل (Delivery Waybill)';
+} else {
+    $invoice_title = 'فاتورة شراء (Purchase Invoice)';
+}
 
 // جلب تفاصيل الطلب
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ?");
@@ -180,6 +185,27 @@ foreach ($items as $item) {
                 <span><?php echo format_historical($order['total_price'], $order, $is_historical, $currency_symbol); ?></span>
             </div>
         </div>
+
+
+        <?php if ($type === 'delivery'): ?>
+        <div style="margin-top: 30px; padding: 20px; border: 2px dashed #0B1B2B; border-radius: 8px; background-color: #fff9e6; text-align: center;">
+            <h3 style="margin-top: 0; color: #d35400;">تعليمات للمندوب</h3>
+            <?php 
+                $payment = $order['payment_method'] ?? '';
+                $is_cod = strpos($payment, 'استلام') !== false || empty($payment);
+            ?>
+            <p style="font-size: 1.3em; font-weight: bold; margin-bottom: 5px;">المبلغ المطلوب تحصيله من العميل:</p>
+            <?php if ($is_cod): ?>
+                <div style="font-size: 2em; font-weight: bold; color: #c0392b; background: #fadbd8; display: inline-block; padding: 10px 20px; border-radius: 8px; margin-bottom: 10px;">
+                    <?php echo format_historical($order['total_price'], $order, $is_historical, $currency_symbol); ?>
+                </div>
+            <?php else: ?>
+                <div style="font-size: 1.5em; font-weight: bold; color: #27ae60; background: #d5f5e3; display: inline-block; padding: 10px 20px; border-radius: 8px; margin-bottom: 10px;">
+                    الطلب مدفوع مسبقاً (0)
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
         
         <div style="text-align: center; margin-top: 40px; color: #777; font-size: 0.9em; border-top: 1px dashed #ccc; padding-top: 20px;">
             <p>شكراً لتسوقكم من متجر أبو عماد للفضيات.</p>

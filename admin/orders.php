@@ -220,7 +220,11 @@ $orders = $stmt->fetchAll();
                                         }
                                         $whatsapp_text .= "رسوم التوصيل: {$delivery_fee_display}\n";
                                         $whatsapp_text .= "الإجمالي: {$total_price_for_msg}\n";
-                                        $whatsapp_text .= "العنوان: {$order['customer_address']}";
+                                        $whatsapp_text .= "العنوان: {$order['customer_address']}\n\n";
+                                        
+                                        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                                        $delivery_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/invoice.php?id=" . $order['id'] . "&p=" . str_replace('+', '', $order['customer_phone']) . "&type=delivery";
+                                        $whatsapp_text .= "لعرض بوليصة التوصيل الخاصة بهذا الطلب، يرجى الضغط على الرابط التالي:\n" . $delivery_url;
                                         
                                         $whatsapp_url = "https://wa.me/?text=" . urlencode($whatsapp_text);
                                         ?>
