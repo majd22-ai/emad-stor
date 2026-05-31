@@ -1,19 +1,16 @@
 <?php
 session_set_cookie_params(['lifetime' => 60 * 60 * 24 * 30, 'path' => '/', 'samesite' => 'Lax']);
 session_start();
-require_once '../includes/db_connect.php';
-require_once '../includes/functions.php';
+require_once 'includes/db_connect.php';
+require_once 'includes/functions.php';
 
-// حماية الصفحة
-check_admin();
-
-if (!isset($_GET['id'])) {
-    die("لم يتم تحديد رقم الفاتورة.");
+if (!isset($_GET['id']) || !isset($_GET['p'])) {
+    die("رابط الفاتورة غير صحيح.");
 }
 
 $order_id = (int)$_GET['id'];
-$type = isset($_GET['type']) && $_GET['type'] === 'sales' ? 'sales' : 'purchase';
-$invoice_title = $type === 'sales' ? 'فاتورة بيع (Sales Invoice)' : 'فاتورة شراء (Purchase Invoice)';
+$phone = $_GET['p'];
+$invoice_title = 'فاتورة شراء (Purchase Invoice)';
 
 // جلب تفاصيل الطلب
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ?");
@@ -22,6 +19,12 @@ $order = $stmt->fetch();
 
 if (!$order) {
     die("الفاتورة غير موجودة.");
+}
+
+// Security Check: Match phone number (ignoring '+')
+$db_phone = str_replace('+', '', $order['customer_phone']);
+if ($phone !== $db_phone) {
+    die("عذراً، ليس لديك صلاحية لعرض هذه الفاتورة.");
 }
 
 // جلب عناصر الطلب
@@ -55,10 +58,9 @@ foreach ($items as $item) {
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $invoice_title . ' - #' . $order_id; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body { font-family: 'Playpen Sans Arabic', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
         .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, 0.15); font-size: 16px; line-height: 24px; color: #555; background: #fff; border-radius: 8px; }
@@ -82,39 +84,31 @@ foreach ($items as $item) {
         .store-name { font-size: 20px; font-weight: bold; color: #0B1B2B; }
         .customer-details { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .customer-details p { margin: 5px 0; }
-        .totals-box { width: 300px; margin-left: auto; margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px; }
+        .totals-box { width: 100%; max-width: 300px; margin-left: auto; margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px; }
         .totals-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
         .totals-row.grand-total { font-weight: bold; font-size: 1.2em; color: #0B1B2B; border-top: 2px solid #ddd; padding-top: 10px; margin-top: 10px; }
         
-        .print-btn, .share-btn { display: inline-block; width: 180px; margin: 10px; padding: 12px; text-align: center; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; font-family: inherit; font-size: 16px; transition: 0.2s; }
-        .print-btn { background: #0B1B2B; }
+        .print-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; text-align: center; background: #0B1B2B; color: #fff; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; font-family: inherit; font-size: 16px; }
         .print-btn:hover { background: #1a365d; }
-        .share-btn { background: #25D366; }
-        .share-btn:hover { background: #1da851; }
-        .action-buttons { text-align: center; margin-bottom: 20px; }
         
         @media only screen and (max-width: 600px) {
             .invoice-box { padding: 15px; }
             .invoice-header { flex-direction: column; text-align: center; }
             .store-details { text-align: center; margin-top: 15px; }
             .totals-box { width: 100%; }
-            .print-btn, .share-btn { width: 90%; margin: 5px auto; display: block; }
         }
         
         @media print {
             body { background: #fff; padding: 0; }
             .invoice-box { box-shadow: none; border: none; padding: 0; max-width: 100%; }
-            .action-buttons { display: none; }
+            .print-btn { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="action-buttons">
-        <button class="print-btn" onclick="window.print()"><i class="fas fa-print"></i> طباعة الفاتورة</button>
-        <button class="share-btn" onclick="shareInvoice()" id="shareBtn"><i class="fas fa-share-alt"></i> مشاركة الفاتورة</button>
-    </div>
+    <button class="print-btn" onclick="window.print()">🖨️ طباعة الفاتورة</button>
     
-    <div class="invoice-box">
+    <div class="invoice-box" id="invoiceArea">
         <div class="invoice-header">
             <div>
                 <h1 class="invoice-title"><?php echo $invoice_title; ?></h1>
@@ -192,55 +186,5 @@ foreach ($items as $item) {
             <p>نأمل أن تحوز منتجاتنا على إعجابكم.</p>
         </div>
     </div>
-
-    <script>
-    async function shareInvoice() {
-        const btn = document.getElementById('shareBtn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التجهيز...';
-        btn.disabled = true;
-
-        try {
-            // Hide action buttons during screenshot just in case
-            const canvas = await html2canvas(document.querySelector('.invoice-box'), { scale: 2, useCORS: true });
-            
-            canvas.toBlob(async function(blob) {
-                const file = new File([blob], 'invoice_<?php echo $order_id; ?>.png', { type: 'image/png' });
-                
-                <?php 
-                    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
-                    $public_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/invoice.php?id=" . $order_id . "&p=" . str_replace('+', '', $order['customer_phone']);
-                ?>
-                const publicUrl = '<?php echo $public_url; ?>';
-                
-                const shareData = {
-                    title: 'فاتورة من متجر أبو عماد',
-                    text: 'يمكنك عرض وطباعة الفاتورة عبر هذا الرابط:',
-                    url: publicUrl,
-                    files: [file]
-                };
-
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share(shareData);
-                } else {
-                    // Fallback if file sharing is not supported by the browser
-                    await navigator.share({
-                        title: shareData.title,
-                        text: shareData.text,
-                        url: shareData.url
-                    });
-                }
-            });
-        } catch (err) {
-            console.error('Error sharing:', err);
-            alert('حدث خطأ أثناء محاولة المشاركة، قد لا يدعم متصفحك هذه الميزة.');
-        } finally {
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }, 1000);
-        }
-    }
-    </script>
 </body>
 </html>

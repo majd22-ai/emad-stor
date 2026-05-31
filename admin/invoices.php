@@ -71,13 +71,6 @@ $invoices = $stmt->fetchAll();
                             } else {
                                 $hist_price_display = format_price($inv['total_price']);
                             }
-
-                            // Generate WhatsApp Message
-                            $wa_text = "مرحباً {$inv['customer_name']}\n";
-                            $wa_text .= "تم إصدار فاتورة شراء لطلبك رقم #{$inv['id']} من متجر أبو عماد.\n";
-                            $wa_text .= "الإجمالي: {$hist_price_display}\n";
-                            $wa_text .= "شكراً لتسوقك معنا!";
-                            $wa_url = "https://wa.me/" . (strpos($inv['customer_phone'], '+') === 0 ? str_replace('+', '', $inv['customer_phone']) : $inv['customer_phone']) . "?text=" . urlencode($wa_text);
                         ?>
                             <tr>
                                 <td><strong>#INV-<?php echo $inv['id']; ?></strong></td>
@@ -88,7 +81,7 @@ $invoices = $stmt->fetchAll();
                                 <td>
                                     <a href="view_invoice.php?id=<?php echo $inv['id']; ?>&type=sales" class="btn btn-print" target="_blank"><i class="fas fa-print"></i> طباعة (مبيعات)</a>
                                     <a href="view_invoice.php?id=<?php echo $inv['id']; ?>&type=purchase" class="btn btn-print" target="_blank" style="background-color: #6c757d;"><i class="fas fa-print"></i> طباعة (مشتري)</a>
-                                    <a href="<?php echo htmlspecialchars($wa_url); ?>" class="btn btn-whatsapp" target="_blank"><i class="fab fa-whatsapp"></i> إرسال للعميل</a>
+
                                 </td>
                             </tr>
                         <?php endforeach; ?>
