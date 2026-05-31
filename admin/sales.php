@@ -223,14 +223,21 @@ foreach ($orders as $o) {
                                             $whatsapp_text .= "سعر المنتج: {$item_price_display}\n";
                                         }
                                         
-                                        $delivery_fee_display = format_price($order['delivery_fee'] ?? 0);
+                                        $delivery_fee_display = '';
+                                        if (!empty($order['currency']) && !empty($order['exchange_rate'])) {
+                                            $hist_del_price = ($order['delivery_fee'] ?? 0) * $order['exchange_rate'];
+                                            $symbol = get_currency_symbol($order['currency']);
+                                            $delivery_fee_display = ($order['currency'] === 'YER') ? number_format($hist_del_price, 0) . ' ' . $symbol : number_format($hist_del_price, 2) . ' ' . $symbol;
+                                        } else {
+                                            $delivery_fee_display = format_price($order['delivery_fee'] ?? 0);
+                                        }
                                         $whatsapp_text .= "رسوم التوصيل: {$delivery_fee_display}\n";
                                         $whatsapp_text .= "الإجمالي: {$total_price_for_msg}\n";
                                         $whatsapp_text .= "العنوان: {$order['customer_address']}";
                                         
                                         $whatsapp_url = "https://wa.me/?text=" . urlencode($whatsapp_text);
                                         ?>
-                                        <p style="margin-bottom: 10px; color: #333;"><strong>رسوم التوصيل المحسوبة:</strong> <?php echo format_price($order['delivery_fee'] ?? 0); ?></p>
+                                        <p style="margin-bottom: 10px; color: #333;"><strong>رسوم التوصيل المحسوبة:</strong> <?php echo $delivery_fee_display; ?></p>
                                         <a href="<?php echo htmlspecialchars($whatsapp_url); ?>" target="_blank" class="btn" style="background-color: #25D366; color: white; display: inline-flex; align-items: center; gap: 8px; font-weight: bold; padding: 10px 15px;"><i class="fab fa-whatsapp" style="font-size: 1.2em;"></i> إرسال للمندوب (واتساب)</a>
                                     </div>
                                     <?php endif; ?>
