@@ -239,6 +239,7 @@ foreach ($items as $item) {
                     $public_url = $protocol . "://" . $_SERVER['HTTP_HOST'] . "/invoice.php?id=" . $order_id . "&p=" . str_replace('+', '', $order['customer_phone']);
                 ?>
                 const publicUrl = '<?php echo $public_url; ?>';
+                const shareText = 'مرحباً،\nيمكنك عرض وطباعة الفاتورة الخاصة بك عبر هذا الرابط المباشر:\n' + publicUrl;
                 
                 const shareData = {
                     title: 'فاتورة من متجر أبو عماد',
@@ -247,20 +248,31 @@ foreach ($items as $item) {
                     files: [file]
                 };
 
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share(shareData);
+                if (navigator.share) {
+                    try {
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                            await navigator.share(shareData);
+                        } else {
+                            await navigator.share({
+                                title: shareData.title,
+                                text: shareData.text,
+                                url: shareData.url
+                            });
+                        }
+                    } catch (e) {
+                        if (e.name !== 'AbortError') {
+                            // Fallback to WhatsApp if share fails
+                            window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
+                        }
+                    }
                 } else {
-                    // Fallback if file sharing is not supported by the browser
-                    await navigator.share({
-                        title: shareData.title,
-                        text: shareData.text,
-                        url: shareData.url
-                    });
+                    // Fallback to WhatsApp if navigator.share is not supported
+                    window.open('https://wa.me/?text=' + encodeURIComponent(shareText), '_blank');
                 }
             });
         } catch (err) {
-            console.error('Error sharing:', err);
-            alert('حدث خطأ أثناء محاولة المشاركة، قد لا يدعم متصفحك هذه الميزة.');
+            console.error('Error preparing image:', err);
+            alert('حدث خطأ أثناء محاولة التجهيز.');
         } finally {
             setTimeout(() => {
                 btn.innerHTML = originalText;
