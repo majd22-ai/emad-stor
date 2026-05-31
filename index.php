@@ -186,35 +186,47 @@ $products = $stmt->fetchAll();
 </div>
 
 <div id="sizeGuideModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: white; width: 90%; max-width: 500px; padding: 2rem; border-radius: 12px; position: relative; max-height: 90vh; overflow-y: auto;">
-        <button onclick="document.getElementById('sizeGuideModal').style.display='none'" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
-        <h3 style="text-align: center; color: #0B1B2B; margin-bottom: 1.5rem;">كيف تعرف مقاسك؟</h3>
-        <p style="margin-bottom: 1rem; color: #555;">لمعرفة مقاس الخاتم المناسب لك، اتبع الخطوات التالية:</p>
-        <ol style="margin-bottom: 1.5rem; padding-right: 1.5rem; color: #444; line-height: 1.6;">
-            <li>أحضر خيطاً أو شريطاً ورقياً ولفه حول إصبعك.</li>
-            <li>ضع علامة بالقلم عند نقطة التقاء الطرفين.</li>
-            <li>افرد الخيط وقم بقياس المسافة بالمسطرة (بالميليمتر).</li>
-            <li>قارن القياس بالجدول التالي لاختيار المقاس المناسب.</li>
-        </ol>
-        <table style="width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 1rem;">
-            <thead>
-                <tr style="background: #f8fafc;">
-                    <th style="border: 1px solid #ddd; padding: 8px;">محيط الإصبع (بالملم)</th>
-                    <th style="border: 1px solid #ddd; padding: 8px;">مقاس الخاتم</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">59 - 61 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">19 (أو 44-46)</td></tr>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">62 - 64 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">20 (أو 47-49)</td></tr>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">65 - 67 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">21 (أو 50-52)</td></tr>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">68 - 70 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">22 (أو 53-55)</td></tr>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">71 - 73 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">23 (أو 56-58)</td></tr>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">74 - 76 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">24 (أو 59-61)</td></tr>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">77 - 79 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">25 (أو 62-64)</td></tr>
-                <tr><td style="border: 1px solid #ddd; padding: 8px;">80 - 82 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">26 (أو 65-67)</td></tr>
-            </tbody>
-        </table>
-        <p style="font-size: 0.85rem; color: #888; text-align: center;">ملاحظة: المقاسات المعروضة في المتجر تمثل القطر الداخلي أو الأرقام المتداولة محلياً.</p>
+    <div style="background: white; width: 95%; max-width: 500px; border-radius: 12px; display: flex; flex-direction: column; max-height: 90vh; overflow: hidden; position: relative;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee;">
+            <h3 style="margin: 0; color: #0B1B2B; font-size: 1.2rem;">كيف تعرف مقاسك؟</h3>
+            <button onclick="document.getElementById('sizeGuideModal').style.display='none'" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #888; line-height: 1;">&times;</button>
+        </div>
+        
+        <!-- Body -->
+        <div style="padding: 20px; overflow-y: auto; flex: 1;">
+            <p style="margin-bottom: 1rem; color: #555;">لمعرفة مقاس الخاتم المناسب لك، اتبع الخطوات التالية:</p>
+            <ol style="margin-bottom: 1.5rem; padding-right: 1.5rem; color: #444; line-height: 1.6;">
+                <li>أحضر خيطاً أو شريطاً ورقياً ولفه حول إصبعك.</li>
+                <li>ضع علامة بالقلم عند نقطة التقاء الطرفين.</li>
+                <li>افرد الخيط وقم بقياس المسافة بالمسطرة (بالميليمتر).</li>
+                <li>قارن القياس بالجدول التالي لاختيار المقاس المناسب.</li>
+            </ol>
+            <table style="width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 1rem;">
+                <thead>
+                    <tr style="background: #f8fafc;">
+                        <th style="border: 1px solid #ddd; padding: 8px;">محيط الإصبع (بالملم)</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">مقاس الخاتم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">59 - 61 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">19 (أو 44-46)</td></tr>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">62 - 64 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">20 (أو 47-49)</td></tr>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">65 - 67 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">21 (أو 50-52)</td></tr>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">68 - 70 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">22 (أو 53-55)</td></tr>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">71 - 73 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">23 (أو 56-58)</td></tr>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">74 - 76 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">24 (أو 59-61)</td></tr>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">77 - 79 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">25 (أو 62-64)</td></tr>
+                    <tr><td style="border: 1px solid #ddd; padding: 8px;">80 - 82 ملم</td><td style="border: 1px solid #ddd; padding: 8px;">26 (أو 65-67)</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size: 0.85rem; color: #888; text-align: center; margin: 0;">ملاحظة: المقاسات المعروضة في المتجر تمثل القطر الداخلي أو الأرقام المتداولة محلياً.</p>
+        </div>
+        
+        <!-- Footer -->
+        <div style="padding: 15px 20px; border-top: 1px solid #eee; text-align: center;">
+            <button onclick="document.getElementById('sizeGuideModal').style.display='none'" style="background: #0B1B2B; color: white; border: none; border-radius: 8px; padding: 12px 24px; font-weight: bold; width: 100%; cursor: pointer; font-size: 1.1rem;">فهمت، شكراً</button>
+        </div>
     </div>
 </div>
 <script>
