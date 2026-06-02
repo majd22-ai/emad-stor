@@ -72,11 +72,10 @@ function addToCart(productElement) {
             showNotification(data.message || 'حدث خطأ', 'error');
             if (data.redirect === 'login') {
                 setTimeout(() => {
-                    // Check if we are in pages/ or root directory
                     if (window.location.pathname.includes('/pages/')) {
-                        window.location.href = 'login.php';
+                        window.location.href = '../login.php';
                     } else {
-                        window.location.href = 'pages/login.php';
+                        window.location.href = 'login.php';
                     }
                 }, 2000);
             }
