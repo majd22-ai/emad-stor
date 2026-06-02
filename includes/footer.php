@@ -30,7 +30,17 @@
         </div>
         <data value=""></data>
     </div>
-    <div class="copyright"><p>© 2025 فضيات ابو عماد للفضة والأحجار الكريمة. جميع الحقوق محفوظة.</p></div>
+    <div class="footer-bottom">
+        <div class="copyright"><p>© 2025 فضيات ابو عماد للفضة والأحجار الكريمة. جميع الحقوق محفوظة.</p></div>
+        <div class="payment-methods">
+            <i class="fab fa-cc-mastercard" style="color: #ff5f00;" title="Mastercard"></i>
+            <i class="fab fa-cc-visa" style="color: #1a1f71;" title="Visa"></i>
+            <i class="fab fa-cc-amex" style="color: #002663;" title="American Express"></i>
+            <i class="fab fa-cc-jcb" style="color: #005a9c;" title="JCB"></i>
+            <i class="fab fa-cc-discover" style="color: #ff6000;" title="Discover"></i>
+            <i class="fab fa-cc-diners-club" style="color: #004b8d;" title="Diners Club"></i>
+        </div>
+    </div>
 </footer>
 
 <!-- ========== COOKIES BANNER ========== -->
