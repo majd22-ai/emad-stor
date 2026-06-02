@@ -36,8 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'انتهت صلاحية الجلسة (CSRF). يرجى تحديث الصفحة والمحاولة مجدداً.';
     } else {
         $name = trim($_POST['customer_name'] ?? '');
-        $phone = trim($_POST['customer_phone'] ?? '');
-    $address = trim($_POST['customer_address'] ?? '');
+        $phone = trim($_POST['full_phone'] ?? $_POST['customer_phone'] ?? '');
+        
+        $country = trim($_POST['country'] ?? '');
+        $city = trim($_POST['city'] ?? '');
+        $street = trim($_POST['street_address'] ?? '');
+        
+        if (!empty($country) && !empty($city) && !empty($street)) {
+            $address = $country . ' - ' . $city . ' - ' . $street;
+        } else {
+            $address = trim($_POST['customer_address'] ?? '');
+        }
     $payment_method = trim($_POST['payment_method'] ?? 'الدفع عند الاستلام');
     $shipping_method = trim($_POST['shipping_method'] ?? 'توصيل');
     $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null; // إذا كان مسجل دخول
@@ -245,14 +254,36 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                             <i class="fas fa-user"></i>
                             <input type="text" name="customer_name" id="customer_name" placeholder="الاسم الكامل" required minlength="3" title="الرجاء إدخال اسمك الكامل (3 أحرف على الأقل)" value="<?php echo isset($_POST['customer_name']) ? htmlspecialchars($_POST['customer_name']) : ''; ?>">
                         </div>
-                        <div class="input-group phone-group" style="direction: ltr;">
-                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف" required minlength="9" maxlength="15" title="الرقم اليمني يتكون من 9 أرقام، ويجب إدخال رقم صحيح حسب الدولة" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>" style="width: 100%; padding-top: 0.9rem; padding-bottom: 0.9rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; background: #F9FBFD; outline: none; text-align: left;">
+                        <div class="input-group phone-group" style="direction: ltr; margin-bottom: 15px;">
+                            <input type="hidden" name="full_phone" id="full_phone" value="">
+                            <input type="tel" name="customer_phone" id="customer_phone" placeholder="رقم الهاتف" required title="الرجاء إدخال رقم هاتف صحيح" value="<?php echo isset($_POST['customer_phone']) ? htmlspecialchars($_POST['customer_phone']) : ''; ?>" style="width: 100%; padding-top: 0.9rem; padding-bottom: 0.9rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; background: #F9FBFD; outline: none; text-align: left;">
+                            <div id="phone-error-msg" style="color: #c62828; font-size: 0.85rem; margin-top: 5px; text-align: right; display: none;">رقم الهاتف غير صحيح</div>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 15px;">
+                            <i class="fas fa-globe" style="top: 20px;"></i>
+                            <select name="country" id="country" required style="width: 100%; padding: 0.9rem 2.8rem 0.9rem 1rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; transition: 0.2s; background: #F9FBFD; cursor: pointer; outline: none;">
+                                <option value="" disabled selected>اختر الدولة...</option>
+                                <option value="اليمن">اليمن</option>
+                                <option value="المملكة العربية السعودية">المملكة العربية السعودية</option>
+                                <option value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
+                                <option value="الكويت">الكويت</option>
+                                <option value="قطر">قطر</option>
+                                <option value="البحرين">البحرين</option>
+                                <option value="عُمان">عُمان</option>
+                                <option value="مصر">مصر</option>
+                                <option value="الأردن">الأردن</option>
+                                <option value="دولة أخرى">دولة أخرى</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 15px;">
+                            <i class="fas fa-city" style="top: 20px;"></i>
+                            <input type="text" name="city" id="city" placeholder="المدينة / المنطقة" required value="<?php echo isset($_POST['city']) ? htmlspecialchars($_POST['city']) : ''; ?>" style="width: 100%; padding: 0.9rem 2.8rem 0.9rem 1rem; border: 1.5px solid #E2E8F0; border-radius: 50px; font-size: 1rem; font-family: inherit; background: #F9FBFD; outline: none;">
                         </div>
                         <div class="input-group">
                             <i class="fas fa-map-marker-alt" style="top: 20px;"></i>
-                            <textarea name="customer_address" id="customer_address" placeholder="العنوان التفصيلي للتوصيل (مثال: صنعاء، شارع تعز، جوار كذا)" required minlength="10" title="الرجاء كتابة عنوان وصفي دقيق (10 أحرف على الأقل)" style="width: 100%; padding: 0.9rem 2.8rem 0.9rem 1rem; border: 1.5px solid #E2E8F0; border-radius: 20px; font-size: 1rem; font-family: inherit; transition: 0.2s; background: #F9FBFD; min-height: 100px; resize: vertical; outline: none;"><?php echo isset($_POST['customer_address']) ? htmlspecialchars($_POST['customer_address']) : ''; ?></textarea>
+                            <textarea name="street_address" id="street_address" placeholder="العنوان التفصيلي (الشارع، رقم المبنى، أقرب معلم)" required minlength="10" title="الرجاء كتابة عنوان وصفي دقيق (10 أحرف على الأقل)" style="width: 100%; padding: 0.9rem 2.8rem 0.9rem 1rem; border: 1.5px solid #E2E8F0; border-radius: 20px; font-size: 1rem; font-family: inherit; transition: 0.2s; background: #F9FBFD; min-height: 100px; resize: vertical; outline: none;"><?php echo isset($_POST['street_address']) ? htmlspecialchars($_POST['street_address']) : ''; ?></textarea>
                         </div>
-                        <button type="button" class="login-btn" onclick="nextStep(2)" style="margin-top: 1.5rem;">التالي: طريقة الدفع</button>
+                        <button type="button" class="login-btn" onclick="nextStepValidation()" style="margin-top: 1.5rem;">التالي: طريقة الدفع</button>
                     </div>
 
                     <!-- الخطوة 2: طريقة الدفع -->
@@ -707,7 +738,43 @@ $delivery_rate_per_km = 500; // تكلفة التوصيل لكل كيلومتر
                     });
                 }
             });
+
+            // Intl-tel-input initialization and validation
+            const phoneInputField = document.querySelector("#customer_phone");
+            const phoneErrorMsg = document.querySelector("#phone-error-msg");
+            const phoneInputObj = window.intlTelInput(phoneInputField, {
+                preferredCountries: ["ye", "sa", "ae", "kw", "qa", "bh", "om", "eg"],
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            });
+
+            function nextStepValidation() {
+                const name = document.getElementById('customer_name').value;
+                const country = document.getElementById('country').value;
+                const city = document.getElementById('city').value;
+                const street = document.getElementById('street_address').value;
+
+                if (!name || name.length < 3) {
+                    alert('الرجاء إدخال اسمك الكامل.');
+                    return;
+                }
+                if (!phoneInputObj.isValidNumber()) {
+                    phoneErrorMsg.style.display = 'block';
+                    return;
+                }
+                phoneErrorMsg.style.display = 'none';
+                
+                if (!country || !city || street.length < 10) {
+                    alert('الرجاء إكمال بيانات العنوان التفصيلي.');
+                    return;
+                }
+
+                // Populate the hidden full_phone input
+                document.getElementById('full_phone').value = phoneInputObj.getNumber();
+
+                nextStep(2);
+            }
             </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
         </div>
     <?php endif; ?>
 </div>
