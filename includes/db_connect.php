@@ -5,7 +5,7 @@ $user = 'neondb_owner';
 $pass = 'npg_NZPcHVn5UqI8';
 $port = '5432'; // المنفذ الافتراضي لـ PostgreSQL
 
-$dsn = "pgsql:host=$host;port=$port;dbname=$db;sslmode=require";
+$dsn = "pgsql:host=$host;port=$port;dbname=$db;sslmode=require;options='endpoint=ep-tiny-wave-aqa2wj71'";
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
